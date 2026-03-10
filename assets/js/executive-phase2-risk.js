@@ -5,81 +5,159 @@
     return document.getElementById(id);
   }
 
-  function safeNumber(v) {
+  function num(v) {
     var n = Number(v);
     return Number.isFinite(n) ? n : 0;
   }
 
-  function collectModalInputs() {
+  function round1(v) {
+    return Math.round((Number(v) || 0) * 10) / 10;
+  }
+
+  function collectFallbackInputs() {
     return {
-      water_m3: safeNumber(byId("water_m3")?.value),
-      energy_kwh: safeNumber(byId("energy_kwh")?.value),
-      co2_kg: safeNumber(byId("co2_kg")?.value),
-      cod: safeNumber(byId("cod")?.value),
-      bod: safeNumber(byId("bod")?.value),
-      tss: safeNumber(byId("tss")?.value),
-      ph: safeNumber(byId("ph")?.value),
-      waste_kg: safeNumber(byId("waste_kg")?.value),
-      incident_note: (byId("incident_note")?.value || "").trim()
+      facility: (byId("esgFacility")?.value || "Ekoten").trim(),
+      period_label: (byId("esgPeriodLabel")?.value || "").trim(),
+      electricity_kwh: num(byId("esgElectricityKwh")?.value),
+      natural_gas_m3: num(byId("esgNaturalGasM3")?.value),
+      steam_ton: num(byId("esgSteamTon")?.value),
+      water_m3: num(byId("esgWaterM3")?.value),
+      industrial_waste_kg: num(byId("esgIndustrialWasteKg")?.value),
+      domestic_waste_kg: num(byId("esgDomesticWasteKg")?.value),
+      forklift_fuel_l: num(byId("esgForkliftFuelL")?.value),
+      vehicle_fuel_l: num(byId("esgVehicleFuelL")?.value),
+      raw_material_transport_tkm: num(byId("esgRawMaterialTransportTkm")?.value),
+      product_transport_tkm: num(byId("esgProductTransportTkm")?.value)
     };
   }
 
-  function calculateExecutiveRisk(data) {
-    var ww = (data.cod + data.bod + data.tss) / 3;
+  function collectModalInputs() {
+    if (typeof window.collectEsgFormData === "function") {
+      try {
+        return window.collectEsgFormData();
+      } catch (e) {
+        console.warn("[Phase2] collectEsgFormData failed, fallback used", e);
+      }
+    }
+    return collectFallbackInputs();
+  }
+
+  function calculateOverlay(data) {
+    if (typeof window.calculateEsgOverlay === "function") {
+      try {
+        return window.calculateEsgOverlay(data);
+      } catch (e) {
+        console.warn("[Phase2] calculateEsgOverlay failed, fallback used", e);
+      }
+    }
+
+    var co2_kg =
+      (data.electricity_kwh * 0.42) +
+      (data.natural_gas_m3 * 2.02) +
+      (data.steam_ton * 65) +
+      (data.forklift_fuel_l * 2.68) +
+      (data.vehicle_fuel_l * 2.68) +
+      (data.raw_material_transport_tkm * 0.09) +
+      (data.product_transport_tkm * 0.08);
+
+    var co2_ton = co2_kg / 1000;
+    var energyLoad =
+      data.electricity_kwh +
+      (data.natural_gas_m3 * 10.55) +
+      (data.steam_ton * 100);
+
+    var signalVelocity = Math.min(35, co2_ton * 1.8);
+    var financialExposure = Math.min(35, co2_ton * 1.5);
+    var operationalNoise = Math.min(
+      30,
+      (data.water_m3 / 8) +
+      ((data.industrial_waste_kg + data.domestic_waste_kg) / 120)
+    );
+
+    return {
+      co2_kg: round1(co2_kg),
+      co2_ton: round1(co2_ton),
+      energy_load: Math.round(energyLoad),
+      water_plus_waste: round1(
+        data.water_m3 + ((data.industrial_waste_kg + data.domestic_waste_kg) / 100)
+      ),
+      signal_velocity: round1(signalVelocity),
+      financial_exposure: round1(financialExposure),
+      operational_noise: round1(operationalNoise)
+    };
+  }
+
+  function calculateExecutiveRisk(data, overlay) {
+    overlay = overlay || calculateOverlay(data);
 
     var ceo =
-      ww * 0.30 +
-      data.co2_kg * 0.20 +
-      data.water_m3 * 0.20 +
-      (data.incident_note ? 15 : 0) * 0.15 +
-      data.waste_kg * 0.15;
+      Math.min(
+        100,
+        overlay.signal_velocity +
+        (overlay.co2_ton * 0.9) +
+        (data.water_m3 / 12) +
+        ((data.industrial_waste_kg + data.domestic_waste_kg) / 90)
+      );
 
     var cfo =
-      data.energy_kwh * 0.35 +
-      data.co2_kg * 0.30 +
-      ww * 0.20 +
-      data.waste_kg * 0.15;
+      Math.min(
+        100,
+        overlay.financial_exposure +
+        (overlay.energy_load / 1200) +
+        ((data.electricity_kwh + (data.natural_gas_m3 * 10.55)) / 2200)
+      );
 
     var cto =
-      ww * 0.40 +
-      data.ph * 0.30 +
-      data.water_m3 * 0.20 +
-      (data.incident_note ? 10 : 0) * 0.10;
+      Math.min(
+        100,
+        overlay.operational_noise +
+        (data.water_m3 / 10) +
+        ((data.industrial_waste_kg + data.domestic_waste_kg) / 110)
+      );
 
     return {
-      ceo: Math.min(Math.round(ceo), 100),
-      cfo: Math.min(Math.round(cfo), 100),
-      cto: Math.min(Math.round(cto), 100)
+      ceo: Math.round(ceo),
+      cfo: Math.round(cfo),
+      cto: Math.round(cto)
     };
   }
 
-  function buildExecutiveAlerts(data, risk) {
+  function buildExecutiveAlerts(data, overlay, risk) {
     var alerts = [];
 
-    if (data.cod > 120) {
+    if (overlay.co2_ton >= 25) {
       alerts.push({
-        owner: "CTO",
+        owner: "CEO",
         severity: "high",
-        title: "COD threshold exceeded",
-        action: "Inspect wastewater treatment"
+        title: "Carbon visibility rising",
+        action: "Review enterprise sustainability posture"
       });
     }
 
-    if (data.energy_kwh > 10000) {
+    if (overlay.energy_load >= 25000) {
       alerts.push({
         owner: "CFO",
         severity: "medium",
-        title: "Energy cost spike",
-        action: "Review facility load"
+        title: "Energy cost pressure building",
+        action: "Review energy drivers and cost exposure"
       });
     }
 
-    if (risk.ceo > 60) {
+    if (data.water_m3 >= 250 || (data.industrial_waste_kg + data.domestic_waste_kg) >= 1000) {
+      alerts.push({
+        owner: "CTO",
+        severity: "high",
+        title: "Operational load exceeds monitor band",
+        action: "Inspect water and waste control pattern"
+      });
+    }
+
+    if (risk.ceo >= 60) {
       alerts.push({
         owner: "CEO",
         severity: "critical",
         title: "Board escalation risk",
-        action: "Immediate sustainability review"
+        action: "Prepare executive review"
       });
     }
 
@@ -90,28 +168,82 @@
     localStorage.setItem("zero_exec_phase2_state", JSON.stringify(payload));
   }
 
+  function updatePhase1SummaryIfAvailable(overlay) {
+    if (typeof window.updateEsgSummary === "function") {
+      try {
+        window.updateEsgSummary(overlay);
+      } catch (e) {
+        console.warn("[Phase2] updateEsgSummary skipped", e);
+      }
+    }
+  }
+
+  function updateExecutiveCards(risk) {
+    console.log("[Phase2] card refresh pending", risk);
+  }
+
+  function updateAlertsTable(alerts) {
+    console.log("[Phase2] alerts refresh pending", alerts);
+  }
+
   function saveEsgEntryPhase2() {
     var data = collectModalInputs();
-    var risk = calculateExecutiveRisk(data);
-    var alerts = buildExecutiveAlerts(data, risk);
+    var overlay = calculateOverlay(data);
+    var risk = calculateExecutiveRisk(data, overlay);
+    var alerts = buildExecutiveAlerts(data, overlay, risk);
 
-    persistExecutiveState({
+    updatePhase1SummaryIfAvailable(overlay);
+    updateExecutiveCards(risk);
+    updateAlertsTable(alerts);
+
+    var payload = {
       esg: data,
+      overlay: overlay,
       risk: risk,
       alerts: alerts,
       ts: new Date().toISOString()
+    };
+
+    persistExecutiveState(payload);
+
+    console.log("[Phase2] ESG saved", payload);
+    return payload;
+  }
+
+  function bindSaveButton() {
+    var btn = byId("saveEsgConsumptionBtn");
+    var form = byId("esgDataEntryForm");
+
+    if (!form || form.__ZERO_PHASE2_BOUND__) return;
+    form.__ZERO_PHASE2_BOUND__ = true;
+
+    form.addEventListener("submit", function (e) {
+      try {
+        e.preventDefault();
+      } catch (_) {}
+      saveEsgEntryPhase2();
     });
 
-    console.log("[Phase2] ESG saved", { data: data, risk: risk, alerts: alerts });
+    if (btn) {
+      btn.setAttribute("data-phase2-bound", "true");
+    }
   }
 
   window.ZeroExecutivePhase2 = {
     collectModalInputs: collectModalInputs,
+    calculateOverlay: calculateOverlay,
     calculateExecutiveRisk: calculateExecutiveRisk,
     buildExecutiveAlerts: buildExecutiveAlerts,
     persistExecutiveState: persistExecutiveState,
-    saveEsgEntryPhase2: saveEsgEntryPhase2
+    saveEsgEntryPhase2: saveEsgEntryPhase2,
+    bindSaveButton: bindSaveButton
   };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindSaveButton);
+  } else {
+    bindSaveButton();
+  }
 
   console.log("[Phase2] executive-phase2-risk loaded");
 })();
