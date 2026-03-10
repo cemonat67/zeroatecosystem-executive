@@ -929,23 +929,23 @@ Risk Drivers</div>
 
     <div class="grid exec">
       <div class="card exec-persona-card" id="execCardCEO" data-role="ceo" style="cursor:pointer;">
-        <div class="split"><div><h2>CEO</h2><div class="muted">Sustainability posture</div></div><span class="badge ok">MONITOR</span></div>
-        <div class="kpi"><div class="num">Wastewater</div></div>
-        <div class="muted">Decision status: <b>LIVE</b></div>
+        <div class="split"><div><h2>CEO</h2><div class="muted" id="ceoSubtext">Sustainability posture</div></div><span class="badge ok" id="ceoBadge">MONITOR</span></div>
+        <div class="kpi"><div class="num" id="ceoKpiValue">Wastewater</div></div>
+        <div class="muted" id="ceoDecisionLine">Decision status: <b>LIVE</b></div>
         <div class="exec-mini-chart-wrap ceo-mini-chart">
           <canvas id="ceoMiniTrend"></canvas>
         </div>
       </div>
       <div class="card exec-persona-card" id="execCardCFO" data-role="cfo" style="cursor:pointer;">
-        <div class="split"><div><h2>CFO</h2><div class="muted">Financial exposure</div></div><span class="badge">€ / Year</span></div>
+        <div class="split"><div><h2>CFO</h2><div class="muted" id="cfoSubtext">Financial exposure</div></div><span class="badge" id="cfoBadge">€ / Year</span></div>
         <div class="kpi"><div class="num" id="cfoExposureValue">€ 477,440</div><div class="unit">estimated impact</div></div>
-        <div class="muted">Today: <b>€ 1,800/day</b></div>
+        <div class="muted" id="cfoTodayLine">Today: <b>€ 1,800/day</b></div>
         <div style="margin-top:10px"><canvas id="cfoSpark" height="70"></canvas></div>
       </div>
       <div class="card exec-persona-card" id="execCardCTO" data-role="cto" style="cursor:pointer;">
-        <div class="split"><div><h2>CTO</h2><div class="muted">System resilience</div></div><span class="badge critical">CRITICAL</span></div>
-        <div class="kpi"><div class="num">API / Views</div><div class="unit">integrity</div></div>
-        <div class="muted">Last check: <b id="t"></b></div>
+        <div class="split"><div><h2>CTO</h2><div class="muted" id="ctoSubtext">System resilience</div></div><span class="badge critical" id="ctoBadge">CRITICAL</span></div>
+        <div class="kpi"><div class="num" id="ctoKpiValue">API / Views</div><div class="unit" id="ctoKpiUnit">integrity</div></div>
+        <div class="muted" id="ctoCheckLine">Last check: <b id="t"></b></div>
         <div class="exec-mini-chart-wrap cto-mini-chart">
           <canvas id="ctoMiniPulse"></canvas>
         </div>
@@ -954,11 +954,11 @@ Risk Drivers</div>
 
     <div class="grid two">
       <div class="card">
-        <div class="split"><div><h2>Executive Alerts</h2><div class="muted">Mock table</div></div><span class="badge">1 alert</span></div>
+        <div class="split"><div><h2>Executive Alerts</h2><div class="muted" id="execAlertsSubtext">Live table</div></div><span class="badge" id="execAlertsBadge">1 alert</span></div>
         <div style="margin-top:10px; overflow:auto;">
           <table class="table">
             <thead><tr><th>Facility</th><th>Risk Today (€)</th><th>Trend</th><th>Approval</th><th>Badge</th><th>Alert</th><th>Reason</th></tr></thead>
-            <tbody>
+            <tbody id="execAlertsBody">
               <tr>
                 <td style="color:rgba(234,240,255,.95);font-weight:500;">Ekoten</td>
                 <td>€ 1,800</td><td>FLAT</td><td>APPROVED</td><td>MONITOR</td>
@@ -1004,7 +1004,7 @@ Risk Drivers</div>
     }
 
     setTimeout(() => {
-    new Chart(document.getElementById('cfoSpark'), {
+    window.__ZERO_CFO_SPARK__ = new Chart(document.getElementById('cfoSpark'), {
       type:'line',
       data:{
         labels:['D1','D2','D3','D4','D5','D6','D7'],
@@ -1038,7 +1038,7 @@ borderWidth: 2,
       }
     });
 
-    new Chart(document.getElementById('waterChart'), {
+    window.__ZERO_WATER_CHART__ = new Chart(document.getElementById('waterChart'), {
       type:'bar',
       data:{
         labels:['Mon','Tue','Wed','Thu','Fri','Sat'],
@@ -1061,7 +1061,7 @@ borderWidth: 2,
       options: baseOpts()
     });
 
-    new Chart(document.getElementById('energyChart'), {
+    window.__ZERO_ENERGY_CHART__ = new Chart(document.getElementById('energyChart'), {
       type:'line',
       data:{
         labels:['Mon','Tue','Wed','Thu','Fri','Sat'],
@@ -1087,7 +1087,7 @@ borderWidth: 2,
       options: baseOpts()
     });
 
-    new Chart(document.getElementById('co2Chart'), {
+    window.__ZERO_CO2_CHART__ = new Chart(document.getElementById('co2Chart'), {
       type:'line',
       data:{
         labels:['Mon','Tue','Wed','Thu','Fri','Sat'],
@@ -1113,7 +1113,7 @@ borderWidth: 2,
       options: baseOpts()
     });
 
-    new Chart(document.getElementById('wwChart'), {
+    window.__ZERO_WW_CHART__ = new Chart(document.getElementById('wwChart'), {
       type:'line',
       data:{
         labels:['Mon','Tue','Wed','Thu','Fri','Sat'],
@@ -3818,7 +3818,7 @@ window.addEventListener("load", function () {
 });
 </script>
 
-<script src="assets/js/executive-phase2-risk.js?v=1773172611"></script>
+<script src="assets/js/executive-phase2-risk.js?v=1773174181"></script>
 </body>
 </html>
 <style id="cto-scenario-highlight-style">
