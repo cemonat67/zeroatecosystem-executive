@@ -3818,7 +3818,6 @@ window.addEventListener("load", function () {
 });
 </script>
 
-<script src="assets/js/executive-phase2-risk.js"></script>
 </body>
 </html>
 <style id="cto-scenario-highlight-style">
