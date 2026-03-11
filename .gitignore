@@ -10,3 +10,7 @@
 /snapshots/agents/
 /supabase/
 /assets/js/*.bak_*
+agents/intake_agent/logs/
+agents/intake_agent/ingestion/pending/
+agents/intake_agent/ingestion/sent/
+agents/intake_agent/ingestion/failed/
