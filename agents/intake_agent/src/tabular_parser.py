@@ -7,19 +7,21 @@ def parse_tabular_file(path: str) -> list[dict]:
     suffix = file_path.suffix.lower()
 
     if suffix == ".csv":
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path, dtype=str, keep_default_na=False)
     elif suffix == ".xlsx":
-        df = pd.read_excel(file_path)
+        df = pd.read_excel(file_path, dtype=str)
+        df = df.fillna("")
     else:
         raise ValueError(f"Unsupported tabular file: {suffix}")
 
-    rows = df.fillna("").to_dict(orient="records")
+    rows = df.to_dict(orient="records")
     records = []
 
     for idx, row in enumerate(rows, start=1):
+        safe_row = {k: ("" if v is None else str(v).strip()) for k, v in row.items()}
         records.append(
             build_record_from_row(
-                row=row,
+                row=safe_row,
                 source_name=file_path.name,
                 source_type=suffix.lstrip("."),
                 row_index=idx,
