@@ -959,6 +959,8 @@ Risk Drivers</div>
       <div class="actions">
         <a class="btn header-green" id="btnBackDashboard" href="index.html">Back</a>
         <button class="btn primary header-green" id="openEsgDataEntryBtn" type="button">Enter Consumption Data</button>
+        <button class="btn header-green" id="openDataIntakeBtn" type="button">Data Intake</button>
+        <button class="btn header-green" id="openDataIntakeBtn" type="button">Data Intake</button>
         <a class="btn header-green" id="btnGoFabric" href="fabric-dpp.html">Fabric</a>
         <a class="btn primary header-green" id="btnGoFinishing" href="finishing-dpp.html">Finishing</a>
       </div>
@@ -3994,6 +3996,11 @@ document.getElementById("execRejectBtn")?.addEventListener("click",function(){
 document.getElementById("execEscalateBtn")?.addEventListener("click",function(){
   setApproval("ESCALATE");
   setBadge("escalate");
+});
+
+
+document.getElementById("openDataIntakeBtn")?.addEventListener("click",function(){
+  window.location.href = "intake.html";
 });
 
 })();
