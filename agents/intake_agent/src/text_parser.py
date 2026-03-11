@@ -3,17 +3,25 @@ from .normalize import build_record_from_row
 
 KNOWN_KEYS = {
     "facility": "facility",
+    "period_start": "period_start",
+    "period_end": "period_end",
     "water_m3": "water_m3",
     "energy_kwh": "energy_kwh",
     "natural_gas_m3": "natural_gas_m3",
     "steam_ton": "steam_ton",
     "co2_kg": "co2_kg",
     "wastewater_m3": "wastewater_m3",
+    "waste_kg": "waste_kg",
     "production_kg": "production_kg",
     "cod_mg_l": "cod_mg_l",
     "bod_mg_l": "bod_mg_l",
     "tss_mg_l": "tss_mg_l",
     "ph": "ph",
+    "energy_cost_try": "energy_cost_try",
+    "water_cost_try": "water_cost_try",
+    "wastewater_cost_try": "wastewater_cost_try",
+    "carbon_cost_try": "carbon_cost_try",
+    "estimated_total_cost_try": "estimated_total_cost_try",
 }
 
 def parse_key_value_text(path: str) -> list[dict]:
