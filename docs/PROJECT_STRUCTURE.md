@@ -1,208 +1,176 @@
-# Zero@Design — Project Structure
+# PROJECT STRUCTURE
 
-This document describes the recommended directory structure for the Zero@Design platform.
+## Current Scope
 
-The goal is to keep the project organized as it grows.
+Zero@Ecosystem — Executive Module currently includes:
+
+### UI / Presentation Layer
+- `executive.html`
+- header action controls
+- executive cards
+- Operations Layer charts
+- Decision Panel
+- ESG input modal
+
+### Logic Layer
+- Executive Risk Equation Engine
+- executive alert consolidation
+- decision state mapping
+- operations-to-executive signal flow
+
+### Assets / JS
+- `assets/js/executive-phase2-risk.js`
+- phase-based executive logic additions
+- chart rendering helpers and UI event bindings
+
+### Documentation Layer
+- project checkpoints
+- modal standards
+- UI standards
+- project status tracking
+- changelog and improvements tracking
+
+## Next Planned Structure Expansion
+
+### A. Data Intake Agent Layer
+Proposed module group:
+- intake source parser
+- spreadsheet parser
+- PDF parser
+- image/scan parser
+- normalization mapper
+- review queue handler
+- CSV export generator
+
+### B. Report Generator Layer
+Proposed module group:
+- report template selector
+- Zero@ standard report renderer
+- board report renderer
+- ESG report renderer
+- audit report renderer
+- export adapters (PDF / DOCX / HTML / CSV)
+
+## Suggested Future Folder Expansion
+
+```text
+site/
+├── assets/
+│   ├── js/
+│   │   ├── executive-phase2-risk.js
+│   │   ├── intake-agent/
+│   │   ├── report-agent/
+│   │   └── shared/
+│   └── css/
+├── docs/
+├── snapshots/
+└── executive.html
+---
+
+## 6) `SYSTEM_MAP.md` dosyasını güncelle
+
+```bash
+cat > SYSTEM_MAP.md <<'EOF'
+# SYSTEM MAP
+
+## Current System
+
+### Core flow
+Operations Signals
+↓
+Executive Risk Engine
+↓
+Executive Cards
+↓
+Executive Alert
+↓
+Decision Panel
+
+## Current operational signal families
+- Water
+- Energy
+- CO2
+- Wastewater
+
+## Current executive interpretation layer
+- CEO posture
+- CFO exposure
+- CTO technical integrity
+
+## Current alerting philosophy
+Multiple underlying signals may exist, but the Executive Layer consolidates them into a decision-oriented alert when necessary.
+
+Principle:
+- operators see signals
+- executives see decisions
+
+## Planned Expanded System Map
+
+Raw Data Sources
+↓
+Universal Data Intake Agent
+↓
+Canonical Intake Schema
+↓
+Manual Form / Auto-Fill Draft
+↓
+Risk Engine
+↓
+Executive Dashboard
+↓
+Report Generator Agent
+↓
+Exports / Archives / Audit Trail
+
+## Supported future source types
+- CSV
+- XLSX
+- PDF
+- scanned document
+- image upload
+- screenshot
+- pasted text
+
+## Planned persistent artifacts
+- original source file
+- extracted raw text
+- normalized JSON
+- generated CSV
+- review status
+- audit metadata
+
+## Planned report families
+- Zero@Production standard report
+- Executive board report
+- Sustainability / ESG report
+- Data audit report
+- custom template report
 
 ---
 
-# Root Structure
-
-zerodesign/
-
-docs/  
-database/  
-seed/  
-data/  
-dashboard/  
-scripts/  
-README.md  
-
----
-
-# docs/
-
-Project documentation.
-
-Files:
-
-PROJECT_STATUS.md  
-IMPROVEMENTS.md  
-DECISIONS.md  
-PROJECT_STRUCTURE.md  
-
-Purpose:
-
-- track project status
-- record architectural decisions
-- capture future ideas
-- document system structure
-
----
-
-# database/
-
-Database related artifacts.
-
-Subfolders:
-
-schema/  
-views/  
-migrations/  
-
----
-
-## database/schema/
-
-SQL definitions of core tables.
-
-Example:
-
-tables.sql
-
----
-
-## database/views/
-
-SQL views used by the analytics and dashboard layers.
-
-Examples:
-
-v_synthetic_carbon_bands.sql  
-v_synthetic_garment_summary.sql  
-
----
-
-## database/migrations/
-
-Future database schema migrations.
-
----
-
-# seed/
-
-Seed data used to initialize the platform.
-
-Subfolders:
-
-sql/  
-exports/  
-scripts/
-
----
-
-## seed/sql/
-
-Core seed SQL files.
-
-001_processes.sql  
-002_emissions.sql  
-003_lifecycle_master.sql  
-004_fabrics.sql  
-005_accessories.sql  
-
----
-
-## seed/exports/
-
-CSV exports of seed datasets.
-
-Used for:
-
-- inspection
-- sharing
-- re-import
-
----
-
-## seed/scripts/
-
-Scripts used for seed management.
-
-bootstrap_zerodesign.sh  
-reset_and_reseed.sh  
-import_synthetic_garments.sh  
-export_seed_csvs.sh  
-generate_synthetic_garment_dataset.py  
-
----
-
-# data/
-
-Data used by the platform.
-
-Subfolders:
-
-synthetic/  
-imported/  
-curated/  
-
----
-
-## data/synthetic/
-
-Synthetic datasets used for simulation and testing.
-
-Example:
-
-synthetic_garment_dataset.csv
-
----
-
-# dashboard/
-
-UI layer.
-
-Subfolders:
-
-executive/  
-assets/  
-
----
-
-## dashboard/executive/
-
-Executive dashboard components.
-
-Examples:
-
-ceo_card.html  
-cto_card.html  
-
----
-
-# scripts/
-
-Utility scripts not directly related to seed or DB setup.
-
----
-
-# Design Principles
-
-The project structure follows a separation of concerns:
-
-docs/ → documentation  
-database/ → database definitions  
-seed/ → seed data and initialization scripts  
-data/ → datasets  
-dashboard/ → UI components  
-scripts/ → utility scripts  
-
----
-
-# Future Growth
-
-Possible future directories:
-
-api/  
-services/  
-models/  
-ml/  
-
-These will support:
-
-- carbon calculation engines
-- machine learning models
-- scenario simulation
-- API services
-
+## 2026-03-11 — Agent Layer Additions
+
+### Agent Documents
+- `AGENTS.md`
+- `AGENTS_PHASE2_CHECKPOINT_2026-03-11.md`
+- `AGENTS_PHASE21_HARDENING_CHECKPOINT_2026-03-11.md`
+- `AGENTS_PHASE21_NUMERIC_FIX_CHECKPOINT_2026-03-11.md`
+- `AGENTS_PHASE21_CSV_STRING_FIX_CHECKPOINT_2026-03-11.md`
+- `AGENTS_ROADMAP_2026-03-11.md`
+- `DATA_INTAKE_AND_REPORTING_PLAN.md`
+
+### Intake Agent Scope
+The Universal Data Intake Agent currently covers:
+- multi-source intake architecture
+- canonical normalization
+- parser layer for CSV and pasted text
+- validation and confidence scoring
+- review manifest generation
+- normalized JSON export
+- flat CSV export
+- hardening and fingerprinting
+
+### Reporting Agent Status
+Reporting is currently defined at architecture / planning level.
+Implementation next target:
+- Report Generator MVP skeleton

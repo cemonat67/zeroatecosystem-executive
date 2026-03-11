@@ -1,157 +1,140 @@
-# Zero@Design — Project Status
+# PROJECT STATUS
 
-Last updated: 2026-03-08
+## Project
+Zero@Ecosystem — Executive Module
 
----
+## Current Stable State
 
-# Platform Overview
+The Executive Dashboard is currently stable and production-presentable.
 
-Zero@Design is a carbon estimation and simulation platform for textile products.
+### Confirmed working state
+- `executive.html` recovered from working backup
+- blank / partial render issue resolved
+- CFO mini chart visually synced with CEO / CTO card style
+- Decision Panel filled and interactive
+- Back button cleaned
+- Header actions updated to green style:
+  - Back
+  - Enter Consumption Data
+  - Fabric
+  - Finishing
+  - Risk pill
+- “+” removed from Enter Consumption Data
+- Operations Layer charts unified:
+  - Water → line
+  - Energy → green line
+  - CO2 → blue line
+  - Wastewater → red line
+- CEO mini trend line changed to green
+- UI confirmed stable after GitHub sync to `main`
 
-The platform models:
+## Executive Logic Status
 
-- textile lifecycle processes
-- material compositions
-- accessories
-- process emissions
-- garment level CO₂ estimates
+### Current decision model
+The dashboard currently uses a **consolidated executive alert model**.
 
-The goal is to support **design, sourcing and executive decision making**.
+This means:
+- operational and technical signals may be multiple
+- executive-level presentation remains decision-oriented
+- the Executive Layer shows one strategic alert when appropriate
 
----
+Design principle:
+- operators see signals
+- executives see decisions
 
-# Environment
+## Current Executive State
 
-Host:
+### Cards
+- CEO → Monitor
+- CFO → financial exposure visible
+- CTO → technical/system integrity pressure visible
 
-MacBook M1  
-Docker
+### Alerts
+- Executive Alerts currently represent a consolidated strategic issue
+- this is intentional and aligned with board-dashboard behavior
 
-Database:
+## Deployment Status
 
-PostgreSQL 16 (postgres:16-alpine)
+### Git
+- feature work was completed on `phase2-exec-risk-engine`
+- branch was fast-forward merged into `main`
+- GitHub repo now contains the current stable UI state
 
-Container:
+### GitHub Pages
+- update pushed to `main`
+- any remaining mismatch is likely Pages build delay or browser cache
 
-zerodesign-db
+## Next Phase
 
-Port:
+### 1. Universal Data Intake Agent
+Goal:
+Accept heterogeneous inputs and convert them into the canonical schema used by the manual input form.
 
-5432
+Planned inputs:
+- CSV
+- XLSX
+- PDF
+- scanned documents
+- images
+- screenshots
+- pasted text
 
-Database name:
+Planned outputs:
+- normalized JSON
+- canonical mapped data
+- generated CSV
+- stored source file
+- review-ready draft import
 
-zero_design_co2
+### 2. Report Generator Agent
+Goal:
+Generate reports in multiple standards and formats, including Zero@ standard reports.
 
----
+Planned report types:
+- Zero@Production standard report
+- Executive board report
+- Sustainability / ESG report
+- Data audit report
+- custom report templates
 
-# Database Structure
-
-Core tables:
-
-processes  
-emissions  
-lifecycle_master  
-fabrics  
-accessories  
-
-Synthetic simulation table:
-
-synthetic_garments
-
----
-
-# Baseline Seed Data
-
-processes        : 7  
-emissions        : 7  
-lifecycle_master : 7  
-fabrics          : 5  
-accessories      : 5  
-
----
-
-# Synthetic Dataset
-
-Table:
-
-synthetic_garments
-
-Rows:
-
-~500 synthetic garment SKUs
-
-Purpose:
-
-- simulation
-- demo scenarios
-- UI dataset
-- CO₂ estimation testing
-
----
-
-# Data Views
-
-v_synthetic_carbon_bands  
-v_synthetic_garment_summary
-
-Used by:
-
-- dashboard
-- UI layer
-- analytics
-
----
-
-# Seed & Data Scripts
-
-seed/scripts/bootstrap_zerodesign.sh  
-seed/scripts/reset_and_reseed.sh  
-seed/scripts/import_synthetic_garments.sh  
-seed/scripts/export_seed_csvs.sh  
-seed/scripts/generate_synthetic_garment_dataset.py  
+Planned export formats:
+- PDF
+- DOCX
+- HTML
+- CSV
+- JSON
 
 ---
 
-# Current Product Focus
+## 2026-03-11 — Docs Update: Intake Agent Phase 2 / 2.1 Stable
 
-Executive Layer
+### Current Stable Status
+The Universal Data Intake Agent architecture and MVP skeleton are now in place in the Zero@Production repository.
 
-Priority sequence:
+### Completed
+- Agent architecture docs added
+- Canonical intake schema defined
+- Intake workflow defined
+- Review / approval flow defined
+- Report generator architecture draft added
+- Intake MVP skeleton added
+- CSV parser added
+- Pasted text parser added
+- Normalized JSON writer added
+- Flat CSV writer added
+- Review manifest writer added
+- Hardening layer added
+- Source hash added
+- Record fingerprint added
+- Validation added
+- Confidence scoring added
+- TR / EU numeric coercion fix completed
+- CSV raw string preservation fix completed before normalization
 
-1️⃣ CEO Card (finalize)
+### Stability Note
+Current status is considered stable for the Intake Agent Phase 2 / 2.1 baseline.
+This docs update does not modify UI or runtime behavior.
 
-2️⃣ CTO Card (design + implement)
-
-3️⃣ Executive dashboard structure
-
-The database layer is considered **stable enough for UI development**.
-
-Further DB changes should only happen if required by executive features.
-
----
-
-# Architectural Layers
-
-Data Layer
-PostgreSQL + seed datasets
-
-Simulation Layer
-synthetic garment generator
-
-Analytics Layer
-SQL views
-
-Executive Layer
-Dashboard cards (CEO / CTO)
-
----
-
-# Next Milestone
-
-Finish CEO Strategic Card.
-
-After that:
-
-Implement CTO Technical Health Card.
-
+### Next Phase
+Next implementation target is:
+- Report Generator MVP skeleton
