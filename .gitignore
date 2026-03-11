@@ -7,3 +7,6 @@
 *.bak_*
 *.work_*
 *.sha256
+/snapshots/agents/
+/supabase/
+/assets/js/*.bak_*
