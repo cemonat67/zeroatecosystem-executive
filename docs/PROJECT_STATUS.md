@@ -138,3 +138,9 @@ This docs update does not modify UI or runtime behavior.
 ### Next Phase
 Next implementation target is:
 - Report Generator MVP skeleton
+
+### Docs Consolidation Note
+Agent checkpoint docs were merged into:
+- `AGENTS_MASTER_STATUS_2026-03-11.md`
+
+The project should now use fewer status files and avoid fragmented checkpoint notes.

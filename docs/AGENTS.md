@@ -86,28 +86,10 @@ Agents must remain:
 
 ## 2026-03-11 — Intake Agent Status Update
 
-### Universal Data Intake Agent
-Status: **Phase 2 / 2.1 stable checkpoint**
+Status is now consolidated into:
+- `AGENTS_MASTER_STATUS_2026-03-11.md`
 
-Implemented scope:
-- canonical intake schema
-- intake workflow
-- review / approval flow
-- CSV parser
-- pasted text parser
-- normalized JSON writer
-- flat CSV writer
-- review manifest writer
-- hardening layer
-- source hash
-- record fingerprint
-- validation
-- confidence scoring
-- TR / EU numeric coercion fix
-- CSV raw string preservation before normalization
-
-### Reporting Agent
-Status: **architecture defined, MVP not yet implemented**
-
-Next build target:
-- Report Generator MVP skeleton
+Current summary:
+- Universal Data Intake Agent Phase 2 / 2.1 stable
+- Reporting Agent architecture defined
+- Next phase: Report Generator MVP skeleton
