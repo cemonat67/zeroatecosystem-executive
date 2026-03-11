@@ -305,34 +305,6 @@
     .badge.ok{border-color: rgba(46,229,157,.35); background: rgba(46,229,157,.10)}
     .badge.monitor{border-color: rgba(249,186,0,.40); background: rgba(249,186,0,.10)}
     .badge.critical{border-color: rgba(255,77,109,.40); background: rgba(255,77,109,.10)}
-
-.badge.header-green,
-.btn.header-green,
-a.header-green{
-  background: rgba(0,85,48,.28) !important;
-  border: 1px solid rgba(46,229,157,.30) !important;
-  color: #eaf7ef !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-}
-.badge.header-green:hover,
-.btn.header-green:hover,
-a.header-green:hover{
-  background: rgba(0,85,48,.40) !important;
-  border-color: rgba(46,229,157,.42) !important;
-}
-#execRisk{
-  display:inline-flex;
-  align-items:center;
-  padding:3px 10px;
-  margin-left:6px;
-  border-radius:999px;
-  background:rgba(0,85,48,.28);
-  border:1px solid rgba(46,229,157,.30);
-  color:#eaf7ef;
-  line-height:1.1;
-}
-
-
     .split{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
     .table{width:100%;border-collapse:separate;border-spacing:0;overflow:visible;border-radius:14px;border:1px solid rgba(27,44,85,.75);background:rgba(6,12,28,.35)}
     .table th,.table td{padding:10px 10px;font-size:12px;border-bottom:1px solid rgba(27,44,85,.55);color:var(--muted);text-align:left;white-space:nowrap}
@@ -344,16 +316,7 @@ a.header-green:hover{
     .pill.monitor{background:rgba(249,186,0,.10);border-color:rgba(249,186,0,.40)}
     .mini{height:96px;border-radius:14px;border:1px dashed rgba(27,44,85,.65);background:rgba(6,12,28,.28);display:grid;place-items:center;color:rgba(170,182,214,.65);font-size:12px}
       canvas{display:block;width:100% !important;height:140px !important;}
-    .cfo-mini-chart{
-      height:122px;
-      border-radius:18px;
-      overflow:hidden;
-    }
-    #cfoSpark{
-      display:block;
-      width:100% !important;
-      height:122px !important;
-    }
+    #cfoSpark{height:70px !important;}
     .exec-persona-card{transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;}
     .exec-persona-card:hover{transform:translateY(-2px); box-shadow:0 20px 44px rgba(0,0,0,.32); border-color:rgba(249,186,0,.42);}
     .exec-modal-backdrop{
@@ -894,62 +857,7 @@ box-shadow:0 0 10px rgba(255,80,80,.5);
           <h1>Zero<span class="brand-at">@</span>Production</h1>
           <div class="sub" id="execSubtitle">Sustainable decision support system for production stage
 <div class="ceo-card" style="margin-top:16px;">
-  <div style="font-weight:700;margin-bottom:10px;">
-<div style="margin-top:18px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
-<div style="font-weight:700;margin-bottom:8px;">Board Intervention Threshold<div class="threshold-marker threshold-marker-premium"></div>
-</div>
-
-<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:999px;position:relative;overflow:visible;">
-<div id="boardRiskBar" style="height:100%;width:0%;background:#f9ba00;"></div>
-</div>
-
-<div style="font-size:12px;margin-top:6px;color:#9fb0c8;">
-
-</div>
-</div>
-
-
-<div style="margin-top:22px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
-<div style="font-weight:700;margin-bottom:12px;">Risk Propagation</div>
-
-<div class="risk-flow">
-<div class="risk-node">Energy volatility</div>
-<div class="risk-arrow">↓</div>
-<div class="risk-node">Production delay</div>
-<div class="risk-arrow">↓</div>
-<div class="risk-node">Margin compression</div>
-<div class="risk-arrow">↓</div>
-<div class="risk-node">Strategic risk</div>
-</div>
-</div>
-
-Risk Drivers</div>
-
-  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-    <span>Energy cost volatility</span>
-    <span style="color:#f9ba00;font-weight:600;">+14</span>
-  </div>
-
-  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-    <span>Supply delay</span>
-    <span style="color:#f9ba00;font-weight:600;">+8</span>
-  </div>
-
-  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-    <span>Wastewater compliance</span>
-    <span style="color:#f9ba00;font-weight:600;">+5</span>
-  </div>
-
-  <div style="display:flex;justify-content:space-between;padding:6px 0;">
-    <span>Quality deviation</span>
-    <span style="color:#f9ba00;font-weight:600;">+3</span>
-  </div>
-</div>
-
-</div>
-        </div>
-      </div>
-      <div class="chips">
+<div class="chips">
         <span class="chip"><span class="dot green"></span><b>Online</b></span>
         <span class="chip">Facility: <b id="execFacility">Ekoten</b></span>
         <span class="chip">Module: <b id="execModule">Executive</b></span>
@@ -957,10 +865,10 @@ Risk Drivers</div>
         <span class="chip">Risk: <b id="execRisk">MONITOR</b></span>
       </div>
       <div class="actions">
-        <a class="btn header-green" id="btnBackDashboard" href="index.html">Back</a>
-        <button class="btn primary header-green" id="openEsgDataEntryBtn" type="button">Enter Consumption Data</button>
-        <a class="btn header-green" id="btnGoFabric" href="fabric-dpp.html">Fabric</a>
-        <a class="btn primary header-green" id="btnGoFinishing" href="finishing-dpp.html">Finishing</a>
+        <a class="btn" id="btnBackDashboard" href="index.html">← Back</a>
+        <button class="btn primary" id="openEsgDataEntryBtn" type="button">+ Enter Consumption Data</button>
+        <a class="btn" id="btnGoFabric" href="fabric-dpp.html">Fabric</a>
+        <a class="btn primary" id="btnGoFinishing" href="finishing-dpp.html">Finishing</a>
       </div>
     </div>
 
@@ -977,7 +885,7 @@ Risk Drivers</div>
         <div class="split"><div><h2>CFO</h2><div class="muted" id="cfoSubtext">Financial exposure</div></div><span class="badge" id="cfoBadge">€ / Year</span></div>
         <div class="kpi"><div class="num" id="cfoExposureValue">€ 477,440</div><div class="unit">estimated impact</div></div>
         <div class="muted" id="cfoTodayLine">Today: <b>€ 1,800/day</b></div>
-        <div class="exec-mini-chart-wrap cfo-mini-chart"><canvas id="cfoSpark"></canvas></div>
+        <div style="margin-top:10px"><canvas id="cfoSpark" height="70"></canvas></div>
       </div>
       <div class="card exec-persona-card" id="execCardCTO" data-role="cto" style="cursor:pointer;">
         <div class="split"><div><h2>CTO</h2><div class="muted" id="ctoSubtext">System resilience</div></div><span class="badge critical" id="ctoBadge">CRITICAL</span></div>
@@ -1009,16 +917,6 @@ Risk Drivers</div>
       <div class="card">
         <div class="split"><div><h2>Decision Panel</h2><div class="muted">Mock actions</div></div><span class="badge monitor">PENDING</span></div>
         <div class="muted" style="margin-top:10px">Approve / Reject / Escalate (next step: wire Supabase)</div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
-          <button id="execApproveBtn" class="btn" style="min-width:110px;">Approve</button>
-          <button id="execRejectBtn" class="btn" style="min-width:110px;">Reject</button>
-          <button id="execEscalateBtn" class="btn primary" style="min-width:110px;">Escalate</button>
-        </div>
-
-        <div id="execDecisionStatus" style="margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(15,37,80,.26);border:1px solid rgba(27,44,85,.72);color:rgba(234,240,255,.92);font-size:13px;line-height:1.5;">
-          Waiting for executive action.
-        </div>
       </div>
     </div>
 
@@ -1059,9 +957,9 @@ Risk Drivers</div>
           label: 'Risk',
           data: [1200,1200,1200,1400,1600,1500,1700,1650,1800,1800,1800],
           borderColor: '#f9ba00',
-          backgroundColor: 'rgba(249,186,0,.12)',
+          backgroundColor: 'rgba(249,186,0,.16)',
           fill: true,
-          tension: .32,
+          tension: .18,
           pointRadius: 0,
           pointHoverRadius: 0,
           pointHitRadius: 6,
@@ -1074,7 +972,7 @@ Risk Drivers</div>
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { left: 0, right: 0, top: 0, bottom: 0 }
+          padding: { left: -8, right: -8, top: 0, bottom: 0 }
         },
         plugins: {
           legend: { display: false },
@@ -1106,19 +1004,23 @@ Risk Drivers</div>
     });
 
     window.__ZERO_WATER_CHART__ = new Chart(document.getElementById('waterChart'), {
-      type:'line',
+      type:'bar',
       data:{
         labels:['Mon','Tue','Wed','Thu','Fri','Sat'],
-        datasets:[{
-          label:'Water',
-          data:[18,20,21,24,26,23],
-          borderColor:'#6aa9ff',
-          backgroundColor:'rgba(106,169,255,.14)',
-          fill:true,
-          tension:.32,
-          pointRadius:2,
-          pointHoverRadius:3,
-          borderWidth:2
+        datasets: [
+{
+label: "Risk",
+borderColor: "#f9ba00",
+backgroundColor: "rgba(249,186,0,0.15)",
+fill: true,
+tension: 0.45,
+pointRadius: 0,
+borderWidth: 2,
+
+          data:[18,17,19,21,20,18],
+          backgroundColor:'rgba(106,169,255,.55)',
+          borderColor:chartBorder,
+          borderWidth:1
         }]
       },
       options: baseOpts()
@@ -1128,15 +1030,22 @@ Risk Drivers</div>
       type:'line',
       data:{
         labels:['Mon','Tue','Wed','Thu','Fri','Sat'],
-        datasets:[{
-          label:'Energy',
+        datasets: [
+{
+label: "Risk",
+borderColor: "#f9ba00",
+backgroundColor: "rgba(249,186,0,0.15)",
+fill: true,
+tension: 0.45,
+pointRadius: 0,
+borderWidth: 2,
+
           data:[420,435,428,440,452,446],
           borderColor:'#2ee59d',
           backgroundColor:'rgba(46,229,157,.12)',
           fill:true,
-          tension:.32,
+          tension:.35,
           pointRadius:2,
-          pointHoverRadius:3,
           borderWidth:2
         }]
       },
@@ -1213,7 +1122,7 @@ function renderCeoMiniTrend() {
       labels: ["1","2","3","4","5","6","7"],
       datasets: [{
         data: [42, 47, 54, 51, 59, 57, 63],
-        borderColor: "#2ee59d",
+        borderColor: "#f9ba00",
         backgroundColor: g,
         fill: true,
         tension: 0.42,
@@ -3916,88 +3825,6 @@ window.addEventListener("load", function () {
 <script src="assets/js/executive-phase3-persistence.js"></script>
 <!-- EXEC_PHASE3_PERSISTENCE_END -->
 
-
-<script>
-(function () {
-  function byId(id){ return document.getElementById(id); }
-
-  function setDecision(msg){
-    var box = byId("execDecisionStatus");
-    if(box) box.textContent = msg;
-  }
-
-  var approve = byId("execApproveBtn");
-  var reject = byId("execRejectBtn");
-  var escalate = byId("execEscalateBtn");
-
-  if (approve) approve.addEventListener("click", function(){
-    setDecision("Approved by executive layer. Next step: persist decision to backend.");
-  });
-
-  if (reject) reject.addEventListener("click", function(){
-    setDecision("Rejected by executive layer. Review threshold, alerts, and source inputs.");
-  });
-
-  if (escalate) escalate.addEventListener("click", function(){
-    setDecision("Escalated to board review. Immediate follow-up recommended.");
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-
-function setApproval(value){
-  const rows = document.querySelectorAll("#execAlertsBody tr");
-
-  rows.forEach(function(r){
-    const approvalCell = r.children[3];
-    if(approvalCell){
-      approvalCell.textContent = value;
-    }
-  });
-
-}
-
-function setBadge(type){
-  const badge = document.getElementById("execAlertsBadge");
-  if(!badge) return;
-
-  if(type==="approve"){
-    badge.textContent="0 alerts";
-    badge.className="badge ok";
-  }
-
-  if(type==="reject"){
-    badge.textContent="1 alert";
-    badge.className="badge action";
-  }
-
-  if(type==="escalate"){
-    badge.textContent="BOARD";
-    badge.className="badge critical";
-  }
-
-}
-
-document.getElementById("execApproveBtn")?.addEventListener("click",function(){
-  setApproval("APPROVED");
-  setBadge("approve");
-});
-
-document.getElementById("execRejectBtn")?.addEventListener("click",function(){
-  setApproval("REJECTED");
-  setBadge("reject");
-});
-
-document.getElementById("execEscalateBtn")?.addEventListener("click",function(){
-  setApproval("ESCALATE");
-  setBadge("escalate");
-});
-
-})();
-</script>
 </body>
 </html>
 <style id="cto-scenario-highlight-style">
