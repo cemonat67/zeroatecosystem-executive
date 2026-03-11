@@ -60,7 +60,7 @@ def build_record_from_row(row: dict, source_name: str, source_type: str, row_ind
     period_start_value, _ = _pick_value(row, FIELD_CANDIDATES["period_start"])
     period_end_value, _ = _pick_value(row, FIELD_CANDIDATES["period_end"])
 
-    facility = (facility_value or DEFAULT_FACILITY)
+    facility = "" if facility_value in (None, "") else str(facility_value).strip()
     period_start = coerce_iso_date(period_start_value)
     period_end = coerce_iso_date(period_end_value)
 
