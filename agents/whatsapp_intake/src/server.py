@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 
 from fastapi import FastAPI, Request, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .adapter import parse_whatsapp_to_record
@@ -11,6 +12,20 @@ from agents.intake_agent.src.validate import validate_record, score_confidence
 from agents.intake_agent.src.config import REJECTED_DIR
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:8080",
+        "http://localhost:8080",
+        "http://127.0.0.1:8010",
+        "http://localhost:8010",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 SITE_ROOT = Path(__file__).resolve().parents[3]
 INTAKE_ROOT = SITE_ROOT / "agents" / "intake_agent"

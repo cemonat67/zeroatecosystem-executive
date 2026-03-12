@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zero@Production — Data Intake Operations</title>
+  <title>Zero@Production — Data Intake Operations [PATCH ACTIVE]</title>
   <style>
     :root{
       --bg:#08101b;
@@ -474,14 +474,56 @@
       });
     }
 
+    let hasLiveOpsData = false;
+
+    function formatMetricValue(key, value){
+      if (value === null || value === undefined || value === "") return "—";
+
+      const num = Number(value);
+      const isNumeric = !Number.isNaN(num);
+
+      if (!isNumeric) return value;
+
+      if (key === "water_m3" || key === "wastewater_m3" || key === "natural_gas_m3") {
+        return `${num.toLocaleString("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1})} m³`;
+      }
+
+      if (key === "energy_kwh") {
+        return `${num.toLocaleString("en-US")} kWh`;
+      }
+
+      if (key === "steam_ton") {
+        return `${num.toLocaleString("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1})} ton`;
+      }
+
+      if (key === "production_kg" || key === "co2_kg") {
+        return `${num.toLocaleString("en-US")} kg`;
+      }
+
+      if (key === "cod_mg_l" || key === "bod_mg_l" || key === "tss_mg_l") {
+        return `${num.toLocaleString("en-US")} mg/L`;
+      }
+
+      if (key === "ph") {
+        return `${num}`;
+      }
+
+      return `${num}`;
+    }
+
     function renderSnapshot(snapshot){
       Object.keys(snapshot).forEach(key => {
         const el = document.getElementById(key);
-        if (el) el.textContent = snapshot[key];
+        if (el) el.textContent = formatMetricValue(key, snapshot[key]);
       });
     }
 
-    function renderState(state){
+    function renderState(state, options = {}){
+      if (hasLiveOpsData && options.source === "demo") {
+        console.warn("[OPS] Demo render blocked because live API data is already active.");
+        return;
+      }
+
       document.getElementById("facilitySelect").value = state.selectedFacility || "Ekoten";
       document.getElementById("snapshotFacilityPill").textContent = "Facility: " + (state.selectedFacility || "Ekoten");
 
@@ -543,10 +585,21 @@
 
     async function loadOpsFromApi(){
       const facility = document.getElementById("facilitySelect").value || "Ekoten";
+
       try{
-        const res = await fetch(`http://127.0.0.1:8010/api/intake/ops?facility=${encodeURIComponent(facility)}`);
-        if(!res.ok) throw new Error("ops api failed");
+        console.log("[OPS] loading live data for facility:", facility);
+
+        const res = await fetch(`http://127.0.0.1:8010/api/intake/ops?facility=${encodeURIComponent(facility)}`, {
+          cache: "no-store"
+        });
+
+        if(!res.ok) throw new Error(`ops api failed: ${res.status}`);
+
         const data = await res.json();
+        console.log("[OPS] live payload:", data);
+
+        hasLiveOpsData = true;
+
         renderState({
           selectedFacility: data.facility || facility,
           latestBatch: data.latest_batch || {},
@@ -562,15 +615,17 @@
             steam_ton: data.snapshot?.steam_ton ?? "—",
             production_kg: data.snapshot?.production_kg ?? "—",
             co2_kg: data.snapshot?.co2_kg ?? "—",
-            cod_mg_l: data.snapshot?.cod_mg_l ?? "—",
-            bod_mg_l: data.snapshot?.bod_mg_l ?? "—",
-            tss_mg_l: data.snapshot?.tss_mg_l ?? "—",
+            cod_mg_l: data.snapshot?.cod_mg_l ?? data.snapshot?.cod ?? "—",
+            bod_mg_l: data.snapshot?.bod_mg_l ?? data.snapshot?.bod ?? "—",
+            tss_mg_l: data.snapshot?.tss_mg_l ?? data.snapshot?.tss ?? "—",
             ph: data.snapshot?.ph ?? "—"
           }
-        });
+        }, { source: "api" });
+
       }catch(err){
-        console.error(err);
-        renderState(buildFacilityDemoState(facility));
+        console.error("[OPS] live load failed:", err);
+        hasLiveOpsData = false;
+        renderState(buildFacilityDemoState(facility), { source: "demo" });
       }
     }
 
