@@ -1,12 +1,15 @@
 from datetime import datetime
 from pathlib import Path
+from .unified_intake import run_csv_upload_pipeline
 import json
+import shutil
 
-from fastapi import FastAPI, Request, Query
+from fastapi import FastAPI, Request, Query, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .adapter import parse_whatsapp_to_record
+from agents.intake_agent.src.intake_core import run_intake_records
 from agents.intake_agent.src.writers import write_normalized_json, write_review_manifest
 from agents.intake_agent.src.validate import validate_record, score_confidence
 from agents.intake_agent.src.config import REJECTED_DIR
@@ -125,6 +128,47 @@ def build_snapshot_for_facility(facility: str):
     }
 
 
+@app.post("/api/intake/upload")
+async def intake_upload(
+    file: UploadFile = File(...),
+    facility: str = Form("Ekoten")
+):
+    upload_dir = INTAKE_ROOT / "uploads"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    safe_name = file.filename or f"upload_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    stored_at = upload_dir / safe_name
+
+    with open(stored_at, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+
+    summary = run_csv_upload_pipeline(
+        csv_path=stored_at,
+        intake_root=INTAKE_ROOT,
+        source="csv_upload_ui",
+        facility=(facility or "").strip() or None,
+    )
+
+    ops_payload = load_ops_snapshot() if "load_ops_snapshot" in globals() else {}
+
+    return JSONResponse({
+        "status": summary["status"],
+        "message": "Upload received and intake pipeline processed",
+        "file_name": summary["file_name"],
+        "stored_at": summary["stored_at"],
+        "batch_id": summary["batch_id"],
+        "record_count": summary["record_count"],
+        "valid_count": summary["valid_count"],
+        "invalid_count": summary["invalid_count"],
+        "avg_confidence": summary["avg_confidence"],
+        "normalized_json": summary["normalized_json"],
+        "review_manifest": summary["review_manifest"],
+        "event_log": summary["event_log"],
+        "ops": ops_payload,
+        "source": "api"
+    })
+
+
 @app.get("/api/intake/ops")
 async def intake_ops(facility: str = Query(default="Ekoten")):
     summary_path = latest_summary_file()
@@ -171,48 +215,99 @@ async def intake_ops(facility: str = Query(default="Ekoten")):
 @app.post("/api/intake/whatsapp")
 async def whatsapp_intake(request: Request):
     payload = await request.json()
-
     record = parse_whatsapp_to_record(payload)
 
-    errors = validate_record(record)
-    record["review"]["validation_errors"] = errors
-    record["meta"]["confidence_score"] = score_confidence(record, errors)
+    flat_record = {
+        "facility": record.get("meta", {}).get("facility"),
+        "source_type": record.get("meta", {}).get("source_type") or "whatsapp",
+        "source_name": record.get("meta", {}).get("source_name") or "whatsapp_form",
+        "received_at": record.get("meta", {}).get("received_at"),
+        "review_status": record.get("meta", {}).get("review_status") or "in_review",
+        "period_start": record.get("meta", {}).get("period_start"),
+        "period_end": record.get("meta", {}).get("period_end"),
+        "water_m3": record.get("metrics", {}).get("water_m3"),
+        "wastewater_m3": record.get("metrics", {}).get("wastewater_m3"),
+        "energy_kwh": record.get("metrics", {}).get("energy_kwh"),
+        "natural_gas_m3": record.get("metrics", {}).get("natural_gas_m3"),
+        "steam_ton": record.get("metrics", {}).get("steam_ton"),
+        "production_kg": record.get("metrics", {}).get("production_kg"),
+        "co2_kg": record.get("metrics", {}).get("co2_kg"),
+        "cod_mg_l": record.get("wastewater_quality", {}).get("cod_mg_l"),
+        "bod_mg_l": record.get("wastewater_quality", {}).get("bod_mg_l"),
+        "tss_mg_l": record.get("wastewater_quality", {}).get("tss_mg_l"),
+        "ph": record.get("wastewater_quality", {}).get("ph"),
+    }
 
-    base_name = f"whatsapp_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    summary = run_intake_records(
+        records=[flat_record],
+        source="whatsapp",
+        intake_root=INTAKE_ROOT,
+        facility=flat_record.get("facility"),
+    )
 
-    if errors:
-        record["meta"]["review_status"] = "rejected"
-        normalized_path = write_normalized_json([record], base_name)
-        rejected_path = write_rejected_json(record, base_name)
-
-        return {
-            "status": "rejected",
-            "stored_at": str(normalized_path),
-            "rejected_at": rejected_path,
-            "validation_errors": errors,
-            "confidence_score": record["meta"]["confidence_score"],
-            "record_preview": {
-                "facility": record["meta"]["facility"],
-                "water_m3": record["metrics"]["water_m3"],
-                "energy_kwh": record["metrics"]["energy_kwh"],
-                "production_kg": record["metrics"]["production_kg"]
-            }
-        }
-
-    record["meta"]["review_status"] = "in_review"
-    normalized_path = write_normalized_json([record], base_name)
-    review_path = str(write_review_manifest([record], base_name))
+    status = "accepted" if summary["invalid_count"] == 0 else "rejected"
 
     return {
-        "status": "accepted",
-        "stored_at": str(normalized_path),
-        "review_manifest": review_path,
+        "status": status,
+        "batch_id": summary["batch_id"],
+        "stored_at": summary["normalized_json"],
+        "review_manifest": summary["review_manifest"],
         "validation_errors": [],
-        "confidence_score": record["meta"]["confidence_score"],
+        "confidence_score": summary["avg_confidence"],
         "record_preview": {
-            "facility": record["meta"]["facility"],
-            "water_m3": record["metrics"]["water_m3"],
-            "energy_kwh": record["metrics"]["energy_kwh"],
-            "production_kg": record["metrics"]["production_kg"]
+            "facility": flat_record.get("facility"),
+            "water_m3": flat_record.get("water_m3"),
+            "energy_kwh": flat_record.get("energy_kwh"),
+            "production_kg": flat_record.get("production_kg"),
+        }
+    }
+
+
+@app.post("/api/intake/raw")
+async def raw_intake(request: Request):
+    payload = await request.json()
+
+    flat_record = {
+        "facility": payload.get("facility"),
+        "source_type": payload.get("source_type") or "api",
+        "source_name": payload.get("source_name") or "raw_api",
+        "received_at": payload.get("received_at"),
+        "review_status": payload.get("review_status") or "in_review",
+        "period_start": payload.get("period_start"),
+        "period_end": payload.get("period_end"),
+        "water_m3": payload.get("water_m3"),
+        "wastewater_m3": payload.get("wastewater_m3"),
+        "energy_kwh": payload.get("energy_kwh"),
+        "natural_gas_m3": payload.get("natural_gas_m3"),
+        "steam_ton": payload.get("steam_ton"),
+        "production_kg": payload.get("production_kg"),
+        "co2_kg": payload.get("co2_kg"),
+        "cod_mg_l": payload.get("cod_mg_l"),
+        "bod_mg_l": payload.get("bod_mg_l"),
+        "tss_mg_l": payload.get("tss_mg_l"),
+        "ph": payload.get("ph"),
+    }
+
+    summary = run_intake_records(
+        records=[flat_record],
+        source="api_raw",
+        intake_root=INTAKE_ROOT,
+        facility=flat_record.get("facility"),
+    )
+
+    status = "accepted" if summary["invalid_count"] == 0 else "rejected"
+
+    return {
+        "status": status,
+        "batch_id": summary["batch_id"],
+        "stored_at": summary["normalized_json"],
+        "review_manifest": summary["review_manifest"],
+        "validation_errors": [],
+        "confidence_score": summary["avg_confidence"],
+        "record_preview": {
+            "facility": flat_record.get("facility"),
+            "water_m3": flat_record.get("water_m3"),
+            "energy_kwh": flat_record.get("energy_kwh"),
+            "production_kg": flat_record.get("production_kg"),
         }
     }

@@ -250,6 +250,7 @@
       .kpi-grid{grid-template-columns:1fr}
     }
   </style>
+  <script src="assets/js/intake-api-config.js"></script>
 </head>
 <body>
   <div class="wrap">
@@ -583,13 +584,18 @@
       return cloned;
     }
 
-    async function loadOpsFromApi(){
+    window.loadOpsFromApi = async function loadOpsFromApi(){
       const facility = document.getElementById("facilitySelect").value || "Ekoten";
+
+      if (!window.ZeroIntakeConfig || typeof window.ZeroIntakeConfig.opsUrl !== "function") {
+        console.warn("[OPS] ZeroIntakeConfig not ready yet");
+        return;
+      }
 
       try{
         console.log("[OPS] loading live data for facility:", facility);
 
-        const res = await fetch(`http://127.0.0.1:8010/api/intake/ops?facility=${encodeURIComponent(facility)}`, {
+        const res = await fetch(window.ZeroIntakeConfig.opsUrl(facility), {
           cache: "no-store"
         });
 
@@ -653,5 +659,7 @@
 
     loadOpsFromApi();
   </script>
+  
+  <script src="assets/js/intake-upload-binding.js"></script>
 </body>
 </html>
