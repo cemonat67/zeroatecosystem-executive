@@ -38,57 +38,91 @@
   }
 
   async function handlePrepareUpload() {
-    const input = findFileInput();
-    if (!input) {
-      setStatus("File input bulunamadı.", true);
-      return;
-    }
-
-    if (!input.files || !input.files.length) {
-      setStatus("Önce bir CSV dosyası seç.", true);
-      return;
-    }
-
-    const file = input.files[0];
-    setStatus(`Seçilen dosya hazır: ${file.name}`);
-
-    // Endpoint henüz yoksa graceful davran
-    if (!window.ZeroIntakeConfig || !window.ZeroIntakeConfig.uploadUrl) {
-      setStatus("Upload config bulunamadı.", true);
-      return;
-    }
-
-    const url = window.ZeroIntakeConfig.uploadUrl();
-
-    // Şimdilik gerçek POST denemesi
-    // Eğer backend endpoint hazır değilse hata yakalayıp anlaşılır mesaj veriyoruz.
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("source", "csv_upload_ui");
-    formData.append("facility", "Ekoten");
+    const btn = findPrepareButton();
+    if (btn) btn.disabled = true;
 
     try {
-      setStatus(`Upload gönderiliyor: ${file.name}`);
+      const input = findFileInput();
+      if (!input) {
+        setStatus("File input bulunamadı.", true);
+        return;
+      }
 
-      const res = await fetch(url, {
+      if (!input.files || !input.files.length) {
+        setStatus("Önce bir CSV dosyası seç.", true);
+        return;
+      }
+
+      const file = input.files[0];
+      setStatus(`Seçilen dosya hazır: ${file.name}`);
+
+      if (!window.ZeroIntakeConfig || !window.ZeroIntakeConfig.preflightUrl || !window.ZeroIntakeConfig.commitUrl) {
+        setStatus("Upload config bulunamadı.", true);
+        return;
+      }
+
+      const preflightUrl = window.ZeroIntakeConfig.preflightUrl();
+      const commitUrl = window.ZeroIntakeConfig.commitUrl();
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      setStatus(`Preflight kontrolü yapılıyor: ${file.name}`);
+
+      const preflight = await fetch(preflightUrl, {
         method: "POST",
         body: formData
       });
 
-      const text = await res.text();
+      const preflightData = await preflight.json();
 
-      if (!res.ok) {
-        setStatus(`Upload endpoint henüz hazır değil veya hata döndü (${res.status}).`, true);
-        console.warn("[upload-binding] non-200 response:", text);
+      if (!preflight.ok) {
+        setStatus(`Preflight hata döndürdü (${preflight.status}).`, true);
+        console.warn("[upload-binding] preflight error:", preflightData);
         return;
       }
 
-      setStatus(`Upload başarılı: ${file.name}`);
+      console.log("[upload-binding] preflight:", preflightData);
+
+      setStatus(`Commit gönderiliyor: ${file.name}`);
+
+      const commitForm = new FormData();
+      commitForm.append("file", file);
+      commitForm.append("zero_fill_missing", "true");
+
+      const commit = await fetch(commitUrl, {
+        method: "POST",
+        body: commitForm
+      });
+
+      const commitData = await commit.json();
+
+      if (!commit.ok) {
+        setStatus(`Commit hata döndürdü (${commit.status}).`, true);
+        console.warn("[upload-binding] commit error:", commitData);
+        return;
+      }
+
+      console.log("[upload-binding] commit:", commitData);
+
+      const inserted = Number(commitData.inserted || 0);
+      const duplicate = Number(commitData.duplicate || 0);
+      const rejected = Number(commitData.rejected || 0);
+
+      if (inserted > 0 && duplicate === 0) {
+        setStatus(`Upload başarılı — inserted=${inserted}, duplicate=${duplicate}, rejected=${rejected}`);
+      } else if (inserted > 0 && duplicate > 0) {
+        setStatus(`Upload tamamlandı — inserted=${inserted}, duplicate skipped=${duplicate}, rejected=${rejected}`);
+      } else if (inserted === 0 && duplicate > 0) {
+        setStatus(`Upload tamamlandı — yeni kayıt yok, duplicate skipped=${duplicate}, rejected=${rejected}`);
+      } else {
+        setStatus(`Upload tamamlandı — inserted=${inserted}, duplicate=${duplicate}, rejected=${rejected}`);
+      }
 
       if (typeof window.loadOpsFromApi === "function") {
         try {
           await window.loadOpsFromApi();
-          setStatus(`Upload başarılı ve dashboard yenilendi: ${file.name}`);
+          console.log("[upload-binding] dashboard refreshed");
         } catch (e) {
           console.warn("[upload-binding] loadOpsFromApi rerun failed", e);
         }
@@ -96,6 +130,9 @@
     } catch (err) {
       setStatus("Upload binding aktif, ama backend upload endpoint henüz bağlı değil.", true);
       console.warn("[upload-binding] fetch failed", err);
+    } finally {
+      const btn = findPrepareButton();
+      if (btn) btn.disabled = false;
     }
   }
 

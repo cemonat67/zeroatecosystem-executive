@@ -2,9 +2,17 @@ from datetime import datetime
 from pathlib import Path
 from .unified_intake import run_csv_upload_pipeline
 import json
+import os
 import shutil
 
-from fastapi import FastAPI, Request, Query, UploadFile, File, Form
+from fastapi import FastAPI, Request, Query, UploadFile, File, Form, HTTPException
+from dotenv import load_dotenv
+from agents.intake_core.src.commit_service import CommitService
+
+load_dotenv('agents/intake_agent/.env')
+from agents.intake_core.src.intake_writer import IntakeWriter
+from agents.intake_core.src.metric_registry import MetricRegistry
+from agents.intake_core.src.facility_registry import FacilityRegistry, build_default_ekoten_registry
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -15,6 +23,16 @@ from agents.intake_agent.src.validate import validate_record, score_confidence
 from agents.intake_agent.src.config import REJECTED_DIR
 
 app = FastAPI()
+
+intake_writer = IntakeWriter()
+metric_registry = MetricRegistry()
+facility_registry = build_default_ekoten_registry()
+commit_service = CommitService(
+    intake_writer=intake_writer,
+    metric_registry=metric_registry,
+    facility_registry=facility_registry,
+)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -311,3 +329,52 @@ async def raw_intake(request: Request):
             "production_kg": flat_record.get("production_kg"),
         }
     }
+
+from agents.intake_core.src.preflight_service import run_csv_preflight
+
+
+@app.post("/api/intake/preflight")
+async def intake_preflight(file: UploadFile = File(...)):
+    filename = file.filename or "upload.csv"
+
+    if not filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Only CSV files are supported for preflight")
+
+    raw = await file.read()
+    if not raw:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty")
+
+    result = run_csv_preflight(
+        file_bytes=raw,
+        file_name=filename,
+        db_url=os.getenv("DATABASE_URL"),
+    )
+    return result
+
+
+@app.post("/api/intake/commit")
+async def intake_commit(
+    file: UploadFile = File(...),
+    zero_fill_missing: bool = Form(False),
+):
+    file_bytes = await file.read()
+
+    result = commit_service.commit_csv_bytes(
+        file_bytes=file_bytes,
+        file_name=file.filename or "upload.csv",
+        zero_fill_missing=zero_fill_missing,
+    )
+
+    return {
+        "ok": True,
+        "file_name": file.filename,
+        "inserted": result.inserted,
+        "duplicate": result.duplicate,
+        "rejected": result.rejected,
+        "total_input_rows": result.total_input_rows,
+        "total_expanded_events": result.total_expanded_events,
+        "zero_filled_fields": result.zero_filled_fields,
+        "warnings": result.warnings,
+        "rejected_rows": result.rejected_rows,
+    }
+
