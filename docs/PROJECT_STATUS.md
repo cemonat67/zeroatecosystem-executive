@@ -69,3 +69,196 @@ The following docs are now the primary source of truth for this stage:
 - AGENTS.md
 - DATA_INTAKE_AND_REPORTING_PLAN.md
 - AGENTS_ROADMAP_2026-03-11.md
+
+
+---
+
+## 2026-03-14 — SAP Mock Feeder Migration Simulator
+
+A new **SAP-like operational data migration simulator** was implemented to emulate
+live ERP → Zero@Production data ingestion.
+
+Module location:
+
+agents/sap_mock_feeder
+
+Capabilities:
+
+• deterministic event generator  
+• order + batch continuity  
+• realistic factory metrics generation  
+• API ingestion simulation  
+• CSV export simulation  
+• burst migration mode  
+
+Pipeline:
+
+SAP Mock Feeder  
+→ Event Generator  
+→ API Sender / CSV Writer  
+→ /api/intake/raw  
+→ intake_agent  
+→ normalized JSON  
+→ review manifest
+
+Runner features:
+
+mode:
+- api
+- csv
+- both
+
+burst_size:
+- configurable event batching
+
+Test results:
+
+✓ API ingestion confirmed  
+✓ CSV export confirmed  
+✓ hybrid mode confirmed  
+
+Golden snapshot created:
+
+.golden/golden-sap-feeder-v1-ui-ready-*
+
+Next phase:
+
+Executive Dashboard **Live Data Intake Monitor**
+
+---
+
+# Project Checkpoint — 2026-03-14
+
+## Zero@Production — Executive Decision Engine
+
+The Zero@Production dashboard is currently operating as a **Factory Decision Support System** for textile dyehouse production planning.
+
+The system integrates operational data and sustainability indicators to help production managers evaluate machine allocation decisions.
+
+### Current Capabilities
+
+The Production Decision Engine currently provides:
+
+- recommended machine selection
+- machine capacity verification
+- machine load percentage
+- estimated water usage
+- estimated energy consumption
+- estimated CO₂ emissions
+- capacity verdict
+- decision explanation
+
+### Machine Alternatives
+
+The system automatically presents **three candidate machines**:
+
+- Recommended machine
+- Alternative machine A
+- Alternative machine B
+
+Each candidate includes:
+
+- load %
+- estimated energy
+- estimated CO₂
+- capacity verdict
+
+### Machine Switch Simulation
+
+Users can click an alternative machine to simulate switching.
+
+The system calculates:
+
+- load delta
+- energy delta
+- water delta
+- CO₂ delta
+
+and generates a sustainability comparison.
+
+### Impact Score
+
+A weighted sustainability score is calculated using:
+
+Impact Score =
+0.4 * Energy Δ  
++0.3 * CO₂ Δ  
++0.2 * Water Δ  
++0.1 * Load Δ  
+
+Severity levels:
+
+- LOW
+- MODERATE
+- HIGH
+
+### What-If Simulation
+
+The dashboard includes a **machine load slider** allowing users to simulate:
+
+- different load scenarios
+- recalculated energy
+- recalculated water
+- recalculated CO₂
+- updated impact score
+
+### Next Development Phase
+
+The next phase of development is **Machine Optimizer**.
+
+This layer will introduce:
+
+- automatic machine ranking
+- decision score calculation
+- best machine recommendation
+- scenario comparison
+- executive optimization panel
+
+Goal: evolve Zero@Production into a **Machine Optimization Engine for industrial production planning**.
+
+
+---
+
+## 2026-03-14 — Brain V2 Executive Drawer Integration Checkpoint
+
+### Completed
+- Brain V2 backend endpoint is live:
+  - `/api/brain/status/v2?facility=ekoten&strategy=balanced`
+- Executive drawer now fetches Brain V2 first and falls back to V1 if needed.
+- `assets/js/executive-ai-insights.js` was stabilized after previous broken regex patch risk.
+- Executive UI now renders:
+  - overall status
+  - executive views
+  - signals
+  - anomalies
+  - recommended actions
+  - optimization decision
+- Cache-bust was added in `executive.html` to force fresh JS loading.
+- `summary.short_text` mapping was added for Brain V2 summary rendering.
+
+### Current Known Critical Domain Bug
+Optimization output is still missing **process compatibility filtering**.
+
+Observed issue:
+- finishing order `ORD-24115`
+- recommended machine `JET-02`
+- but `JET-02` belongs to `dyeing`, not `finishing`
+
+Required next fix:
+- add order `process_type` ↔ machine `line_id` / process compatibility filter
+- exclude incompatible machines from ranking
+- optionally mark them as `ineligible` in optimization output
+
+### Current Frontend Files
+- `assets/js/executive-ai-insights.js`
+- `executive.html`
+
+### Current Backend Brain V2 Files
+- `agents/whatsapp_intake/src/brain/models.py`
+- `agents/whatsapp_intake/src/brain/twin.py`
+- `agents/whatsapp_intake/src/brain/signals.py`
+- `agents/whatsapp_intake/src/brain/anomaly.py`
+- `agents/whatsapp_intake/src/brain/optimization.py`
+- `agents/whatsapp_intake/src/brain/summaries.py`
+- `agents/whatsapp_intake/src/brain/service.py`
+
