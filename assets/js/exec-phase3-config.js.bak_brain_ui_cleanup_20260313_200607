@@ -1,0 +1,80 @@
+window.__ZERO_SUPABASE__ = {
+  url: "https://rtwhzicuugebbxcpvstz.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2h6aWN1dWdlYmJ4Y3B2c3R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzODUwNjUsImV4cCI6MjA3Nzk2MTA2NX0.56QW4LvsQbys8meOA2dBwhpB8N7HH6Lm-YrZDEP687o"
+};
+
+async function loadBrainStatus() {
+  try {
+    const r = await fetch("http://127.0.0.1:8010/api/brain/status?facility=ekoten");
+    const data = await r.json();
+
+    if (!data.ok) return;
+
+    const brain = data.brain;
+
+    const panel = document.getElementById("brain-status-panel");
+    if (!panel) return;
+
+    panel.innerHTML = `
+      <div style="padding:12px;border-radius:8px;background:#111;color:#fff">
+        <b>Factory Brain</b><br>
+        Status: <b>${brain.status}</b><br>
+        Signals: ${brain.signals.join(", ") || "none"}
+      </div>
+    `;
+
+  } catch (e) {
+    console.warn("brain fetch failed", e);
+  }
+}
+
+window.loadBrainStatus = loadBrainStatus;
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.loadBrainStatus) {
+    window.loadBrainStatus();
+  }
+});
+
+
+
+async function loadGreenOSBrain() {
+
+  try {
+
+    const r = await fetch("http://127.0.0.1:8010/api/brain/status?facility=ekoten");
+    const data = await r.json();
+
+    if (!data.ok) return;
+
+    const brain = data.brain;
+
+    const signals = brain.signals.length ? brain.signals.join(", ") : "No anomalies detected";
+
+    let health = 92
+
+    if (brain.status === "MONITOR") health = 78
+    if (brain.status === "ALERT") health = 55
+
+    const recommendation = brain.recommended_action || "System stable"
+
+    document.getElementById("brainHealthScore").innerText = health + "/100"
+    document.getElementById("brainSignals").innerText = signals
+    document.getElementById("brainRecommendation").innerText = recommendation
+
+  } catch(e) {
+
+    console.warn("GreenOS Brain failed", e)
+
+  }
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (window.loadGreenOSBrain) return
+  window.loadGreenOSBrain = loadGreenOSBrain
+  loadGreenOSBrain()
+
+})

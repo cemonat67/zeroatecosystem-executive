@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zero@Production — Control Center (Mock UI)</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="assets/css/executive.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <img src="assets/img/plogo.svg" class="brand-logo" alt="Zero@Production logo">
+        <div class="brand-title">
+          <h1>Zero<span class="brand-at">@</span>Production</h1>
+          <div class="sub" id="execSubtitle">Sustainable decision support system for production stage
+<div class="ceo-card" style="margin-top:16px;">
+  <div style="font-weight:700;margin-bottom:10px;">
+<div style="margin-top:18px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
+<div style="font-weight:700;margin-bottom:8px;">Board Intervention Threshold<div class="threshold-marker threshold-marker-premium"></div>
+</div>
+
+<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:999px;position:relative;overflow:visible;">
+<div id="boardRiskBar" style="height:100%;width:0%;background:#f9ba00;"></div>
+</div>
+
+<div style="font-size:12px;margin-top:6px;color:#9fb0c8;">
+
+</div>
+</div>
+
+
+<div style="margin-top:22px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
+<div style="font-weight:700;margin-bottom:12px;">Risk Propagation</div>
+
+<div class="risk-flow">
+<div class="risk-node">Energy volatility</div>
+<div class="risk-arrow">↓</div>
+<div class="risk-node">Production delay</div>
+<div class="risk-arrow">↓</div>
+<div class="risk-node">Margin compression</div>
+<div class="risk-arrow">↓</div>
+<div class="risk-node">Strategic risk</div>
+</div>
+</div>
+
+Risk Drivers</div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+    <span>Energy cost volatility</span>
+    <span style="color:#f9ba00;font-weight:600;">+14</span>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+    <span>Supply delay</span>
+    <span style="color:#f9ba00;font-weight:600;">+8</span>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+    <span>Wastewater compliance</span>
+    <span style="color:#f9ba00;font-weight:600;">+5</span>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;padding:6px 0;">
+    <span>Quality deviation</span>
+    <span style="color:#f9ba00;font-weight:600;">+3</span>
+  </div>
+</div>
+
+</div>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip"><span class="dot green"></span><b>Online</b></span>
+        <span class="chip">Facility: <b id="execFacility">Ekoten</b></span>
+        <span class="chip">Module: <b id="execModule">Executive</b></span>
+        <span class="chip">Lens: <b id="execLens">overview</b></span>
+        <span class="chip">Risk: <b id="execRisk">MONITOR</b></span>
+      </div>
+      <div class="actions">
+        <a class="btn header-green" id="btnBackDashboard" href="index.html">Back</a>
+        <button class="btn primary header-green" id="openEsgDataEntryBtn" type="button">Enter Consumption Data</button>
+        <button class="btn header-green" id="openDataIntakeBtn" type="button">Data Intake</button>
+        
+        <a class="btn header-green" id="btnGoFabric" href="fabric-dpp.html">Fabric</a>
+        <a class="btn primary header-green" id="btnGoFinishing" href="finishing-dpp.html">Finishing</a>
+        <button class="btn header-green" id="openAiInsightsBtn" type="button">AI Insights</button>
+      </div>
+    </div>
+
+    <div class="grid exec">
+      <div class="card exec-persona-card" id="execCardCEO" data-role="ceo" style="cursor:pointer;">
+        <div class="split"><div><h2>CEO</h2><div class="muted" id="ceoSubtext">Sustainability posture</div></div><span class="badge ok" id="ceoBadge">MONITOR</span></div>
+        <div class="kpi"><div class="num" id="ceoKpiValue">Wastewater</div></div>
+        <div class="muted" id="ceoDecisionLine">Decision status: <b>LIVE</b></div>
+        <div class="exec-mini-chart-wrap ceo-mini-chart">
+          <canvas id="ceoMiniTrend"></canvas>
+        </div>
+      </div>
+      <div class="card exec-persona-card" id="execCardCFO" data-role="cfo" style="cursor:pointer;">
+        <div class="split"><div><h2>CFO</h2><div class="muted" id="cfoSubtext">Financial exposure</div></div><span class="badge" id="cfoBadge">€ / Year</span></div>
+        <div class="kpi"><div class="num" id="cfoExposureValue">€ 477,440</div><div class="unit">estimated impact</div></div>
+        <div class="muted" id="cfoTodayLine">Today: <b>€ 1,800/day</b></div>
+        <div class="exec-mini-chart-wrap cfo-mini-chart"><canvas id="cfoSpark"></canvas></div>
+      </div>
+      <div class="card exec-persona-card" id="execCardCTO" data-role="cto" style="cursor:pointer;">
+        <div class="split"><div><h2>CTO</h2><div class="muted" id="ctoSubtext">System resilience</div></div><span class="badge critical" id="ctoBadge">CRITICAL</span></div>
+        <div class="kpi"><div class="num" id="ctoKpiValue">API / Views</div><div class="unit" id="ctoKpiUnit">integrity</div></div>
+        <div class="muted" id="ctoCheckLine">Last check: <b id="t"></b></div>
+        <div class="exec-mini-chart-wrap cto-mini-chart">
+          <canvas id="ctoMiniPulse"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="liveMigrationMonitorCard" style="margin-top:18px;">
+      <div class="split">
+        <div>
+          <h2>Live Data Migration Monitor</h2>
+          <div class="muted">SAP / ERP → Zero@Production runtime intake status</div>
+        </div>
+        <span class="badge ok" id="liveFeedStatusBadge">LIVE</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:16px;">
+        <div><div class="muted">Mode</div><div class="kpi"><div class="num" id="liveModeValue">--</div></div></div>
+        <div><div class="muted">Burst Size</div><div class="kpi"><div class="num" id="liveBurstValue">--</div></div></div>
+        <div><div class="muted">Event Count</div><div class="kpi"><div class="num" id="liveEventCountValue">--</div></div></div>
+        <div><div class="muted">API Status</div><div class="kpi"><div class="num" id="liveApiStatusValue">--</div></div></div>
+        <div><div class="muted">CSV Status</div><div class="kpi"><div class="num" id="liveCsvStatusValue">--</div></div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:12px;">
+        <div><div class="muted">Last Order</div><div style="font-weight:700;" id="liveOrderValue">--</div></div>
+        <div><div class="muted">Last Batch</div><div style="font-weight:700;" id="liveBatchValue">--</div></div>
+        <div><div class="muted">Process Line</div><div style="font-weight:700;" id="liveProcessValue">--</div></div>
+        <div><div class="muted">Machine</div><div style="font-weight:700;" id="liveMachineValue">--</div></div>
+        <div><div class="muted">Last Update</div><div style="font-weight:700;" id="liveUpdateValue">--</div></div>
+      </div>
+    </div>
+
+    <div class="card" id="dataIntakeSourcesCard" style="margin-top:18px;">
+      <div class="split">
+        <div>
+          <h2>Unified Data Intake Sources</h2>
+          <div class="muted">Zero@Production is a unified industrial data intake and decision platform.</div>
+        </div>
+        <span class="badge monitor">MULTI-SOURCE</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.4fr .9fr;gap:18px;margin-top:16px;align-items:start;">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(42,196,168,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.03);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">SAP / ERP</div>
+                  <div class="muted" style="margin-top:4px;">Core enterprise feed</div>
+                </div>
+                <span class="pill ok">LIVE</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Last</span><span id="srcSapLast">00:52</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span id="srcSapFlow">Active</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">MES</div>
+                  <div class="muted" style="margin-top:4px;">Production execution</div>
+                </div>
+                <span class="pill monitor">READY</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Last</span><span>—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Standby</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">IoT</div>
+                  <div class="muted" style="margin-top:4px;">Sensor telemetry</div>
+                </div>
+                <span class="pill monitor">READY</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Last</span><span>—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Standby</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">CSV Upload</div>
+                  <div class="muted" style="margin-top:4px;">Bulk structured files</div>
+                </div>
+                <span class="pill ok">ACTIVE</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Validation</span><span>Ready</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Batch</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">Manual Form</div>
+                  <div class="muted" style="margin-top:4px;">Executive / ops entry</div>
+                </div>
+                <span class="pill ok">ACTIVE</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Validation</span><span>Ready</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Manual</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">WhatsApp</div>
+                  <div class="muted" style="margin-top:4px;">Field messages</div>
+                </div>
+                <span class="pill monitor">READY</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Last</span><span>—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Queued</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">QR Code</div>
+                  <div class="muted" style="margin-top:4px;">Machine / batch scan</div>
+                </div>
+                <span class="pill monitor">READY</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Last</span><span>—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Scan</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">Email Attachment</div>
+                  <div class="muted" style="margin-top:4px;">Supplier documents</div>
+                </div>
+                <span class="pill monitor">READY</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Last</span><span>—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Inbox</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,31,68,.72),rgba(8,24,55,.92));border:1px solid rgba(255,255,255,.08);">
+              <div class="split" style="align-items:flex-start;gap:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;">OCR / Scan</div>
+                  <div class="muted" style="margin-top:4px;">Picture to data</div>
+                </div>
+                <span class="pill monitor">READY</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:#9fb0cf;">
+                <span>Last</span><span>—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:#9fb0cf;">
+                <span>Flow</span><span>Vision</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:14px 16px;border-radius:18px;background:linear-gradient(180deg,rgba(8,23,52,.85),rgba(6,17,40,.96));border:1px solid rgba(255,255,255,.08);min-height:100%;">
+          <div class="split">
+            <div>
+              <div style="font-size:14px;font-weight:800;">Live Intake Stream</div>
+              <div class="muted" style="margin-top:4px;">Unified operational event pulse</div>
+            </div>
+            <span class="pill ok">LIVE</span>
+          </div>
+
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
+            <div style="padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);">
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <div style="font-weight:700;">SAP / ERP</div>
+                <div class="muted" id="intakeStreamTime1">now</div>
+              </div>
+              <div class="muted" style="margin-top:4px;" id="intakeStreamLine1">Batch telemetry accepted into runtime layer</div>
+            </div>
+
+            <div style="padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);">
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <div style="font-weight:700;">CSV Upload</div>
+                <div class="muted">ready</div>
+              </div>
+              <div class="muted" style="margin-top:4px;">Structured bulk intake channel available</div>
+            </div>
+
+            <div style="padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);">
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <div style="font-weight:700;">Manual Form</div>
+                <div class="muted">active</div>
+              </div>
+              <div class="muted" style="margin-top:4px;">Consumption entry and executive override input open</div>
+            </div>
+
+            <div style="padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);">
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <div style="font-weight:700;">Next Channels</div>
+                <div class="muted">planned</div>
+              </div>
+              <div class="muted" style="margin-top:4px;">QR scans, WhatsApp media, email attachments and OCR intake will appear here as live events</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div class="split"><div><h2>Executive Alerts</h2><div class="muted" id="execAlertsSubtext">Live table</div></div><span class="badge" id="execAlertsBadge">1 alert</span></div>
+        <div style="margin-top:10px; overflow:auto;">
+          <table class="table">
+            <thead><tr><th>Facility</th><th>Risk Today (€)</th><th>Trend</th><th>Approval</th><th>Badge</th><th>Alert</th><th>Reason</th></tr></thead>
+            <tbody id="execAlertsBody">
+              <tr>
+                <td style="color:rgba(234,240,255,.95);font-weight:500;">Ekoten</td>
+                <td>€ 1,800</td><td>FLAT</td><td>APPROVED</td><td>MONITOR</td>
+                <td><span class="pill action">ACTION</span></td><td>RISK_ABOVE_THRESHOLD</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="split"><div><h2>Decision Panel</h2><div class="muted">Mock actions</div></div><span class="badge monitor">PENDING</span></div>
+        <div class="muted" style="margin-top:10px">Approve / Reject / Escalate (next step: wire Supabase)</div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+          <button id="execApproveBtn" class="btn" style="min-width:110px;">Approve</button>
+          <button id="execRejectBtn" class="btn" style="min-width:110px;">Reject</button>
+          <button id="execEscalateBtn" class="btn primary" style="min-width:110px;">Escalate</button>
+        </div>
+
+        <div id="execDecisionStatus" style="margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(15,37,80,.26);border:1px solid rgba(27,44,85,.72);color:rgba(234,240,255,.92);font-size:13px;line-height:1.5;">
+          Waiting for executive action.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin:18px 2px 10px;font-weight:900">Operations Layer</div>
+    <div class="grid ops">
+      <div class="card"><div class="split"><div><h2>Water</h2><div class="muted">m³/ton</div></div><span class="pill monitor">MONITOR</span></div><canvas id="waterChart" height="140"></canvas></div>
+      <div class="card"><div class="split"><div><h2>Energy</h2><div class="muted">kWh/batch</div></div><span class="pill ok">OK</span></div><canvas id="energyChart" height="140"></canvas></div>
+      <div class="card"><div class="split"><div><h2>CO₂</h2><div class="muted">tCO₂</div></div><span class="pill ok">OK</span></div><canvas id="co2Chart" height="140"></canvas></div>
+      <div class="card"><div class="split"><div><h2>Wastewater</h2><div class="muted">risk</div></div><span class="pill action">ACTION</span></div><canvas id="wwChart" height="140"></canvas></div>
+    </div>
+  </div>
+
+  
+
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <div class="esg-modal-backdrop" id="esgDataEntryModal" aria-hidden="true">
+    <div class="esg-modal" role="dialog" aria-modal="true" aria-labelledby="esgDataEntryTitle">
+      <div class="esg-modal-head">
+        <div>
+          <h2 class="esg-modal-title" id="esgDataEntryTitle">Executive ESG Data Entry</h2>
+          <div class="esg-modal-sub">Manual consumption entry layer for GHG / ESG inputs. This patch stores the latest record locally and feeds a lightweight executive overlay without breaking CEO / CFO / CTO engines.</div>
+        </div>
+        <button class="esg-modal-close" id="closeEsgDataEntryBtn" type="button">✕ Close</button>
+      </div>
+
+      <div class="esg-modal-body">
+        <form id="esgDataEntryForm">
+          <div class="esg-form-grid">
+            <div class="esg-section">
+              <h3>Context</h3>
+              <div class="esg-field">
+                <label for="esgFacility">Facility</label>
+                <input id="esgFacility" name="facility" type="text" placeholder="Ekoten">
+              </div>
+              <div class="esg-field">
+                <label for="esgPeriodLabel">Period</label>
+                <input id="esgPeriodLabel" name="period_label" type="text" placeholder="2026-03">
+              </div>
+            </div>
+
+            <div class="esg-section">
+              <h3>Energy</h3>
+              <div class="esg-field">
+                <label for="esgElectricityKwh">Electricity (kWh)</label>
+                <input id="esgElectricityKwh" name="electricity_kwh" type="number" min="0" step="any" placeholder="0">
+              </div>
+              <div class="esg-field">
+                <label for="esgNaturalGasM3">Natural Gas (m3)</label>
+                <input id="esgNaturalGasM3" name="natural_gas_m3" type="number" min="0" step="any" placeholder="0">
+              </div>
+              <div class="esg-field">
+                <label for="esgSteamTon">Steam (ton)</label>
+                <input id="esgSteamTon" name="steam_ton" type="number" min="0" step="any" placeholder="0">
+              </div>
+            </div>
+
+            <div class="esg-section">
+              <h3>Water</h3>
+              <div class="esg-field">
+                <label for="esgWaterM3">Water consumption (m3)</label>
+                <input id="esgWaterM3" name="water_m3" type="number" min="0" step="any" placeholder="0">
+              </div>
+            </div>
+
+            <div class="esg-section">
+              <h3>Waste</h3>
+              <div class="esg-field">
+                <label for="esgIndustrialWasteKg">Industrial waste (kg)</label>
+                <input id="esgIndustrialWasteKg" name="industrial_waste_kg" type="number" min="0" step="any" placeholder="0">
+              </div>
+              <div class="esg-field">
+                <label for="esgDomesticWasteKg">Domestic waste (kg)</label>
+                <input id="esgDomesticWasteKg" name="domestic_waste_kg" type="number" min="0" step="any" placeholder="0">
+              </div>
+            </div>
+
+            <div class="esg-section">
+              <h3>Fuel</h3>
+              <div class="esg-field">
+                <label for="esgForkliftFuelL">Forklift fuel</label>
+                <input id="esgForkliftFuelL" name="forklift_fuel_l" type="number" min="0" step="any" placeholder="0">
+              </div>
+              <div class="esg-field">
+                <label for="esgVehicleFuelL">Vehicle fuel</label>
+                <input id="esgVehicleFuelL" name="vehicle_fuel_l" type="number" min="0" step="any" placeholder="0">
+              </div>
+            </div>
+
+            <div class="esg-section">
+              <h3>Transport</h3>
+              <div class="esg-field">
+                <label for="esgRawMaterialTransportTkm">Raw material transport</label>
+                <input id="esgRawMaterialTransportTkm" name="raw_material_transport_tkm" type="number" min="0" step="any" placeholder="0">
+              </div>
+              <div class="esg-field">
+                <label for="esgProductTransportTkm">Product transport</label>
+                <input id="esgProductTransportTkm" name="product_transport_tkm" type="number" min="0" step="any" placeholder="0">
+              </div>
+            </div>
+
+            <div class="esg-section" style="grid-column:1 / -1;">
+              <h3>Evidence / Invoice Upload</h3>
+              <div class="esg-field">
+                <label for="esgInvoiceUpload">Upload invoice or utility bill</label>
+                <input id="esgInvoiceUpload" name="invoice_upload" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp">
+              </div>
+              <div id="esgInvoiceMeta" class="esg-meta">No invoice uploaded yet.</div>
+              <div style="margin-top:10px;">
+                <button class="btn" id="removeEsgInvoiceBtn" type="button">Remove Invoice</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="esg-actions">
+            <div class="esg-actions-left">
+              <button class="btn primary" id="saveEsgConsumptionBtn" type="submit">Save ESG Entry</button>
+              <button class="btn" id="resetEsgConsumptionBtn" type="button">Reset</button>
+            </div>
+            <div class="esg-actions-right">
+              <div class="esg-meta" id="esgEntryStatus">No saved ESG record yet.</div>
+            </div>
+          </div>
+        </form>
+
+        <div class="esg-summary" id="esgSummaryCards">
+          <div class="esg-summary-card">
+            <div class="k">Estimated CO₂e</div>
+            <div class="v" id="esgSummaryCo2e">0.0 t</div>
+          </div>
+          <div class="esg-summary-card">
+            <div class="k">Energy Load</div>
+            <div class="v" id="esgSummaryEnergy">0</div>
+          </div>
+          <div class="esg-summary-card">
+            <div class="k">Water + Waste</div>
+            <div class="v" id="esgSummaryOps">0</div>
+          </div>
+          <div class="esg-summary-card">
+            <div class="k">Overlay Risk</div>
+            <div class="v" id="esgSummaryRisk">0 / 100</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exec-modal-backdrop" id="execModalBackdrop" aria-hidden="true">
+    <div class="exec-modal" role="dialog" aria-modal="true" aria-labelledby="execModalTitle">
+      <div class="exec-modal-head">
+        <div>
+          <h2 class="exec-modal-title" id="execModalTitle">Detailed PP</h2>
+          <div class="exec-modal-sub" id="execModalSub">Executive lens popup</div>
+        </div>
+        <button class="exec-modal-close" id="execModalClose" type="button">✕ Close</button>
+      </div>
+      <div id="execModalBody"></div>
+    </div>
+  </div>
+
+
+
+
+
+<!-- CFO_DYNAMIC_ROI_UPGRADE_START -->
+
+<!-- CFO_DYNAMIC_ROI_UPGRADE_END -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- === PHASE1_UX_POLISH_SCRIPT_START === -->
+
+<!-- === PHASE1_UX_POLISH_SCRIPT_END === -->
+
+
+<script id="ceo-phase1-ux-polish-script">
+(function () {
+  function bindCeoPhase1UxPolish() {
+    var result = document.getElementById("ceoModalScenarioResult");
+    var risk = document.getElementById("ceoModalScenarioRisk");
+    var riskValue = document.getElementById("ceoModalScenarioRiskValue");
+    var buttons = [
+      document.getElementById("ceoModalScenarioStabilize"),
+      document.getElementById("ceoModalScenarioDigital"),
+      document.getElementById("ceoModalScenarioIgnore")
+    ].filter(Boolean);
+
+    if (!result || !risk || !buttons.length) return;
+    if (window.__CEO_PHASE1_UX_POLISH_BOUND__) return;
+    window.__CEO_PHASE1_UX_POLISH_BOUND__ = true;
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        result.classList.remove("ceo-result-animate");
+        if (riskValue) {
+          riskValue.classList.remove("ceo-risk-pulse");
+        } else {
+          if (riskValue) {
+            riskValue.classList.remove("ceo-risk-pulse");
+          } else {
+            risk.classList.remove("ceo-risk-pulse");
+          }
+        }
+
+        void result.offsetWidth;
+        if (riskValue) {
+          void riskValue.offsetWidth;
+        } else {
+          void risk.offsetWidth;
+        }
+
+        result.classList.add("ceo-result-animate");
+        if (riskValue) {
+          riskValue.classList.add("ceo-risk-pulse");
+        } else {
+          risk.classList.add("ceo-risk-pulse");
+        }
+
+        setTimeout(function () {
+          result.classList.remove("ceo-result-animate");
+        }, 360);
+
+        setTimeout(function () {
+          if (riskValue) {
+          riskValue.classList.remove("ceo-risk-pulse");
+        } else {
+          if (riskValue) {
+            riskValue.classList.remove("ceo-risk-pulse");
+          } else {
+            risk.classList.remove("ceo-risk-pulse");
+          }
+        }
+        }, 920);
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindCeoPhase1UxPolish);
+  } else {
+    bindCeoPhase1UxPolish();
+(function(){
+  const el=document.getElementById("ceoModalStrategicRiskValue");
+  if(!el) return;
+
+  const n=parseInt(el.textContent);
+  if(isNaN(n)) return;
+
+  el.style.transition="color .3s ease";
+
+  if(n<40){
+    el.style.color="#3ddc97";
+  }else if(n<70){
+    el.style.color="#f9ba00";
+  }else{
+    el.style.color="#ff5c5c";
+  }
+})();
+
+
+(function(){
+  const map = {
+    ceoModalScenarioStabilize: "−12",
+    ceoModalScenarioDigital: "−18",
+    ceoModalScenarioIgnore: "+14"
+  };
+
+  Object.keys(map).forEach(id=>{
+    const btn=document.getElementById(id);
+    if(!btn) return;
+
+    if(btn.querySelector(".delta")) return;
+
+    const span=document.createElement("span");
+    span.className="delta";
+    span.style.marginLeft="6px";
+    span.style.fontWeight="600";
+    span.style.opacity=".8";
+    span.textContent=map[id];
+
+    btn.appendChild(span);
+  });
+})();
+
+  }
+})();
+</script>
+
+
+
+
+
+
+
+
+<script id="exec-mini-charts-late-loader">
+window.addEventListener("load", function () {
+  setTimeout(function () {
+    try {
+      if (typeof renderCeoMiniTrend === "function") renderCeoMiniTrend();
+      if (typeof renderCtoMiniPulse === "function") renderCtoMiniPulse();
+      console.log("[mini-charts] late loader fired");
+    } catch (e) {
+      console.error("[mini-charts] late loader error:", e);
+    }
+  }, 120);
+});
+</script>
+
+<script src="assets/js/executive-phase2-risk.js?v=1773174181"></script>
+
+<!-- EXEC_PHASE3_PERSISTENCE_START -->
+<script src="assets/js/exec-phase3-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/executive-phase3-persistence.js"></script>
+<!-- EXEC_PHASE3_PERSISTENCE_END -->
+
+
+
+
+
+
+
+
+<script src="assets/js/executive-ai-insights.js"></script>
+  <script src="assets/js/executive-ui.js"></script>
+</body>
+</html>
+
+
