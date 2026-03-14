@@ -24,6 +24,17 @@
 
 
   <link rel="stylesheet" href="assets/css/executive.css">
+  <link rel="stylesheet" href="assets/css/executive-production-decision.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+window.ZERO_CONFIG = {
+  SUPABASE_URL: "https://rtwhzicuugebbxcpvstz.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2h6aWN1dWdlYmJ4Y3B2c3R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzODUwNjUsImV4cCI6MjA3Nzk2MTA2NX0.56QW4LvsQbys8meOA2dBwhpB8N7HH6Lm-YrZDEP687o"
+};
+</script>
+
 </head>
 <body>
   <div class="wrap">
@@ -728,8 +739,42 @@ window.addEventListener("load", function () {
 
 
 
-<script src="assets/js/executive-ai-insights.js"></script>
+<script src="assets/js/executive-ai-insights.js?v=20260314a"></script>
   <script src="assets/js/executive-ui.js"></script>
+
+  <!-- Production Decision Engine -->
+  <section id="zpProductionDecisionEngine" class="zp-pde-shell" aria-label="Production Decision Engine">
+    <div class="zp-pde-head">
+      <div>
+        <div class="zp-pde-kicker">Factory Intelligence Layer</div>
+        <h2 class="zp-pde-title">Production Decision Engine</h2>
+        <p class="zp-pde-sub">Recommended machine, capacity fit, sustainability estimate and short decision note.</p>
+      </div>
+      <div id="zpPdeBadge" class="zp-pde-badge">Initializing</div>
+    </div>
+    <div id="zpPdeBody" class="zp-pde-body">
+      <div class="zp-pde-loading">Loading Production Decision Engine…</div>
+    </div>
+  </section>
+
+  <!-- Machine Alternatives -->
+  <section id="zpProductionAlternatives" class="zp-alt-shell" aria-label="Machine Alternatives">
+    <div class="zp-alt-head">
+      <div>
+        <div class="zp-pde-kicker">Decision Support Layer</div>
+        <h2 class="zp-alt-title">Machine Alternatives</h2>
+        <p class="zp-alt-sub">Recommended machine and nearby alternatives for executive comparison.</p>
+      </div>
+      <div id="zpAltBadge" class="zp-pde-badge">Initializing</div>
+    </div>
+    <div id="zpAltBody" class="zp-alt-body">
+      <div class="zp-pde-loading">Loading machine alternatives…</div>
+    </div>
+  </section>
+
+
+<script src="assets/js/executive-production-decision.js"></script>
+  <script src="assets/js/executive-production-alternatives.js"></script>
 </body>
 </html>
 
